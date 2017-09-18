@@ -13,10 +13,14 @@ public class UIController {
 	@Value("${mlrGatewayPort}")
 	private String mlrGatewayPort;
 	
+	@Value("${mlrGatewayUploadPath}")
+	private String mlrGatewayUploadPath;
+	
 	@GetMapping("/")
 	public String ui(Model model) {
 		model.addAttribute("mlrGatewayHost", mlrGatewayHost);
 		model.addAttribute("mlrGatewayPort", mlrGatewayPort);
+		model.addAttribute("mlrGatewayUploadPath", mlrGatewayUploadPath);
 		return "ui";
 	}
 }

@@ -10,18 +10,20 @@
 			function upload() {
 				var documentData = new FormData();
 				documentData.append('file', $('input#ddotFile.uploadDdotFile')[0].files[0]);
+				var url = "${mlrGatewayHost}" + ":" + "${mlrGatewayPort}";
+				url += "${mlrGatewayUploadPath}".startsWith("/") ? "${mlrGatewayUploadPath}" : "/" + "${mlrGatewayUploadPath}";
 				$.ajax({
-					url: "${mlrGatewayHost}:${mlrGatewayPort}${mlrGatewayUploadPath}",
+					url: url,
 					type: 'POST',
 					data: documentData,
+					contentType: false,
 					cache: false,
-					contentType: "multipart/form-data",
 					processData: false,
 					success: function (response) {
 						alert("Document uploaded successfully.");
 					},
 					error: function(response) {
-						alert("Failed." + response);
+						alert("Failed." + response.toString());
 					}
 				});
 			}
