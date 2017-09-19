@@ -6,12 +6,20 @@
 <html lang="en">
 	<head>
 		<script src="static/jquery/jquery.min.js"></script>
-		<script type="text/javascript">
-			function upload() {
+		<script type="text/javascript">			
+			function generalSuccess (response) {
+				alert("Success:" + response.toString());
+			}
+			
+			function generalError (response) {
+				alert("Failed." + response.toString());
+			}
+			
+			function postDdot(postPath, success, error) {
 				var documentData = new FormData();
 				documentData.append('file', $('input#ddotFile.uploadDdotFile')[0].files[0]);
 				var url = "${mlrGatewayHost}" + ":" + "${mlrGatewayPort}";
-				url += "${mlrGatewayUploadPath}".startsWith("/") ? "${mlrGatewayUploadPath}" : "/" + "${mlrGatewayUploadPath}";
+				url += postPath.startsWith("/") ? postPath : "/" + postPath;
 				$.ajax({
 					url: url,
 					type: 'POST',
@@ -19,13 +27,17 @@
 					contentType: false,
 					cache: false,
 					processData: false,
-					success: function (response) {
-						alert("Document uploaded successfully.");
-					},
-					error: function(response) {
-						alert("Failed." + response.toString());
-					}
+					success: success,
+					error: error
 				});
+			}
+			
+			function validateDdot() {
+				postDdot("${mlrGatewayValidatePath}", generalSuccess, generalError)
+			}
+			
+			function uploadDdot() {
+				postDdot("${mlrGatewayUploadPath}", generalSuccess, generalError)
 			}
 		</script>
 	</head>
@@ -37,8 +49,9 @@
 				<h2>Ddot File Upload</h2>
 				<label for="ddotFile">Select Ddot File to Upload</label>
 				<input id="ddotFile" type="file" class="uploadDdotFile">
-				<br/>
-				<input type="button" value="Upload Selected File" class="btn btn-xs btn-primary uploadDdotFile"  onClick="upload()">
+				<br><br>
+				<input type="button" value="Validate Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="validateDdot()">&nbsp;
+				<input type="button" value="Update Records Using Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="uploadDdot()">
 			</div>
 			<br/>
 			<br/>

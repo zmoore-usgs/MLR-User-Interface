@@ -16,11 +16,15 @@ public class UIController {
 	@Value("${mlrGatewayUploadPath}")
 	private String mlrGatewayUploadPath;
 	
+	@Value("${mlrGatewayValidatePath}")
+	private String mlrGatewayValidatePath;
+	
 	@GetMapping("/")
 	public String ui(Model model) {
 		model.addAttribute("mlrGatewayHost", mlrGatewayHost);
 		model.addAttribute("mlrGatewayPort", mlrGatewayPort);
 		model.addAttribute("mlrGatewayUploadPath", mlrGatewayUploadPath);
+		model.addAttribute("mlrGatewayValidatePath", mlrGatewayValidatePath);
 		return "ui";
 	}
 }
