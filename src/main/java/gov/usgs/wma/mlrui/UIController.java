@@ -7,16 +7,16 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class UIController {
-	@Value("${mlrGatewayHost}")
+	@Value("${MLR_GATEWAY_HOST}")
 	private String mlrGatewayHost;
 	
-	@Value("${mlrGatewayPort}")
+	@Value("${MLR_GATEWAY_PORT}")
 	private String mlrGatewayPort;
 	
-	@Value("${mlrGatewayUploadPath}")
+	@Value("${MLR_GATEWAY_UPLOAD_PATH}")
 	private String mlrGatewayUploadPath;
 	
-	@Value("${mlrGatewayValidatePath}")
+	@Value("${MLR_GATEWAY_VALIDATE_PATH}")
 	private String mlrGatewayValidatePath;
 	
 	@GetMapping("/")
