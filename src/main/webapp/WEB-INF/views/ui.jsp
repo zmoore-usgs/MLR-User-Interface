@@ -5,25 +5,10 @@
 
 <html lang="en">
 	<head>
-		<!-- Load Variables -->
-		<script type="text/javascript">
-			var MLR_GATEWAY_HOST = "${MLR_GATEWAY_HOST}";
-			var MLR_GATEWAY_PORT = "${MLR_GATEWAY_PORT}";
-			var MLR_GATEWAY_UPLOAD_PATH  = "${MLR_GATEWAY_UPLOAD_PATH}";
-			var MLR_GATEWAY_VALIDATE_PATH="${MLR_GATEWAY_VALIDATE_PATH}";
-		</script>
-		
-		<!-- WebJars -->
-		<script src="static/jquery/jquery.min.js"></script>
-		<script src="static/bootstrap/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css" />
-		
-		<!-- USGS Header / Footer -->
-		<link rel="stylesheet" href="static/css/usgs_style.css" />
-		
-		<!-- Application -->
-		<script src="static/js/ui.js"></script>
+		<!-- Load CSS -->
 		<link rel="stylesheet" href="static/css/ui.css" />
+		<link rel="stylesheet" href="static/css/usgs_style.css" />
+		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css" />
 	</head>
 	<body>
 		<title>Monitoring Location Registry</title>
@@ -50,5 +35,21 @@
 			</div>
 		</div>
 		<jsp:include page="footer.jsp"></jsp:include>
+		
+		<!-- Load Variables -->
+		<script type="text/javascript">
+			var MLR_UI = {config: {}};
+			MLR_UI.config.MLR_GATEWAY_HOST = "${MLR_GATEWAY_HOST}";
+			MLR_UI.config.MLR_GATEWAY_PORT = "${MLR_GATEWAY_PORT}";
+			MLR_UI.config.MLR_GATEWAY_UPLOAD_PATH  = "${MLR_GATEWAY_UPLOAD_PATH}";
+			MLR_UI.config.MLR_GATEWAY_VALIDATE_PATH="${MLR_GATEWAY_VALIDATE_PATH}";
+		</script>
+		
+		<!-- WebJars -->
+		<script src="static/jquery/jquery.min.js"></script>
+		<script src="static/bootstrap/js/bootstrap.min.js"></script>
+				
+		<!-- Application -->
+		<script src="static/js/ui.js"></script>
 	</body>
 </html>

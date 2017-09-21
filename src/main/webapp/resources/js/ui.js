@@ -26,7 +26,7 @@ function generalError (response) {
 
 function postDdot(postPath, success, error) {
 	//Build Upload URL
-	var url = MLR_GATEWAY_HOST + ":" + MLR_GATEWAY_PORT;
+	var url = MLR_UI.config.MLR_GATEWAY_HOST + ":" + MLR_UI.config.MLR_GATEWAY_PORT;
 	url += postPath.startsWith("/") ? postPath : "/" + postPath;
 	
 	//Grab File to Upload
@@ -62,9 +62,9 @@ function postDdot(postPath, success, error) {
 }
 
 function validateDdot() {
-	postDdot(MLR_GATEWAY_VALIDATE_PATH, generalSuccess, generalError)
+	postDdot(MLR_UI.config.MLR_GATEWAY_VALIDATE_PATH, generalSuccess, generalError)
 }
 
 function uploadDdot() {
-	postDdot(MLR_GATEWAY_UPLOAD_PATH, generalSuccess, generalError)
+	postDdot(MLR_UI.config.MLR_GATEWAY_UPLOAD_PATH, generalSuccess, generalError)
 }
