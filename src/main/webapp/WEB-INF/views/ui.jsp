@@ -18,31 +18,37 @@
 		<script src="static/bootstrap/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css" />
 		
+		<!-- USGS Header / Footer -->
+		<link rel="stylesheet" href="static/css/usgs_style.css" />
+		
 		<!-- Application -->
 		<script src="static/js/ui.js"></script>
 		<link rel="stylesheet" href="static/css/ui.css" />
 	</head>
 	<body>
 		<title>Monitoring Location Registry</title>
+		<jsp:include page="header.jsp"></jsp:include>
 		<div class="mlr-container">
-			<h1>Monitoring Location Registry</h1>
-			<div>
-				<h2>Ddot File Upload</h2>
-				<form name=ddotForm" id="ddotForm" method="POST" enctype="multipart/form-data">
-					<label for="ddotFile">Select Ddot File to Upload</label>
-					<input id="file" type="file" name="file" class="uploadDdotFile"><br>
-					<input type="button" value="Validate Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="validateDdot()">&nbsp;
-					<input type="button" value="Update Records Using Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="uploadDdot()">
-				</form>
-				<div id="ddotResponse" style="display: none">
-					<h3>Upload Response</h3>
-					<div class="spinner-container">
-						<span id="loading-spinner"></span>
+			<div class="mlr-content">
+				<div>
+					<h4 id="upload-header" class="ddot-header">Ddot File Upload</h4>
+					<form name=ddotForm" id="ddotForm" method="POST" enctype="multipart/form-data">
+						<label for="ddotFile">Select Ddot File to Upload</label>
+						<input id="file" type="file" name="file" class="uploadDdotFile"><br>
+						<input type="button" value="Validate Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="validateDdot()">&nbsp;
+						<input type="button" value="Update Records Using Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="uploadDdot()">
+					</form>
+					<div id="ddot-response" style="display: none">
+						<h4 id="response-header" class="ddot-header">Upload Response</h4>
+						<div class="spinner-container">
+							<span id="loading-spinner"></span>
+						</div>
+						<span id="response-text"></span>
 					</div>
-					<span id="response-text"></span>
 				</div>
+				<br/>
 			</div>
-			<br/>
 		</div>
+		<jsp:include page="footer.jsp"></jsp:include>
 	</body>
 </html>
