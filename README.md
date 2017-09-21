@@ -1,5 +1,5 @@
 # MLR-User-Interface
-[![Build Status](https://travis-ci.org/USGS-CIDA/MLR-User-Interface.svg?branch=master)](https://travis-ci.org/USGS-CIDA/MLR-User-Interface) [![Coverage Status](https://coveralls.io/repos/github/USGS-CIDA/MLR-User-Interface/badge.svg?branch=master)](https://coveralls.io/github/USGS-CIDA/MLR-User-Interface?branch=master)
+[![Build Status](https://travis-ci.org/USGS-CIDA/MLR-User-Interface.svg?branch=master)](https://travis-ci.org/USGS-CIDA/MLR-User-Interface)
 
 
 Simple UI for interacting with MLR. Currently only supports Ddot File Upload
