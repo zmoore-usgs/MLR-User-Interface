@@ -16,7 +16,7 @@ and then the application will launch and be available at http://localhost:8080/s
 This docker image is designed to be used with Docker Swarm and as such it uses Docker Secrets for passing in configuration.
 
 ### Building the Image
-The docker image is built using a jar version that has been uploaded to the CIDA artifactory. The artifact version needs to be provided as follows:
+The docker image is built using a war version that has been uploaded to the CIDA artifactory. The artifact version needs to be provided as follows:
 ```
 % docker build --build-arg mlr-version=0.1-SNAPSHOT -t mlr_interface .
 ```
