@@ -5,66 +5,44 @@
 
 <html lang="en">
 	<head>
-		<script src="static/jquery/jquery.min.js"></script>
-		<script type="text/javascript">			
-			function generalSuccess (response) {
-				alert("Success:" + response.toString());
-			}
-			
-			function generalError (response) {
-				alert("Failed." + response.toString());
-			}
-			
-			function postDdot(postPath, success, error) {
-				var documentData = new FormData();
-				documentData.append('file', $('input#ddotFile.uploadDdotFile')[0].files[0]);
-				var url = "${mlrGatewayHost}" + ":" + "${mlrGatewayPort}";
-				url += postPath.startsWith("/") ? postPath : "/" + postPath;
-				$.ajax({
-					url: url,
-					type: 'POST',
-					data: documentData,
-					contentType: false,
-					cache: false,
-					processData: false,
-					success: success,
-					error: error
-				});
-			}
-			
-			function validateDdot() {
-				postDdot("${mlrGatewayValidatePath}", generalSuccess, generalError)
-			}
-			
-			function uploadDdot() {
-				postDdot("${mlrGatewayUploadPath}", generalSuccess, generalError)
-			}
+		<!-- Load Variables -->
+		<script type="text/javascript">
+			var MLR_GATEWAY_HOST = "${MLR_GATEWAY_HOST}";
+			var MLR_GATEWAY_PORT = "${MLR_GATEWAY_PORT}";
+			var MLR_GATEWAY_UPLOAD_PATH  = "${MLR_GATEWAY_UPLOAD_PATH}";
+			var MLR_GATEWAY_VALIDATE_PATH="${MLR_GATEWAY_VALIDATE_PATH}";
 		</script>
+		
+		<!-- WebJars -->
+		<script src="static/jquery/jquery.min.js"></script>
+		<script src="static/bootstrap/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css" />
+		
+		<!-- Application -->
+		<script src="static/js/ui.js"></script>
+		<link rel="stylesheet" href="static/css/ui.css" />
 	</head>
 	<body>
 		<title>Monitoring Location Registry</title>
-		<div>
+		<div class="mlr-container">
 			<h1>Monitoring Location Registry</h1>
 			<div>
 				<h2>Ddot File Upload</h2>
-				<label for="ddotFile">Select Ddot File to Upload</label>
-				<input id="ddotFile" type="file" class="uploadDdotFile">
-				<br><br>
-				<input type="button" value="Validate Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="validateDdot()">&nbsp;
-				<input type="button" value="Update Records Using Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="uploadDdot()">
+				<form name=ddotForm" id="ddotForm" method="POST" enctype="multipart/form-data">
+					<label for="ddotFile">Select Ddot File to Upload</label>
+					<input id="file" type="file" name="file" class="uploadDdotFile"><br>
+					<input type="button" value="Validate Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="validateDdot()">&nbsp;
+					<input type="button" value="Update Records Using Selected File" class="btn btn-xs btn-primary uploadDdotFile" onclick="uploadDdot()">
+				</form>
+				<div id="ddotResponse" style="display: none">
+					<h3>Upload Response</h3>
+					<div class="spinner-container">
+						<span id="loading-spinner"></span>
+					</div>
+					<span id="response-text"></span>
+				</div>
 			</div>
 			<br/>
-			<br/>
-			<div style="visibility: hidden;">
-				<h2>Monitoring Location Export</h2>
-				<label for="exportSiteNumber">Site Number</label>
-				<input id="exportSiteNumber" type="text" class="exportSiteText">
-				<br/>
-				<label for="exportSiteAgencyCode">Agency Code</label>
-				<input id="exportSiteAgencyCode" type="text" class="exportSiteText">
-				<br/>
-				<input type="button" value="Export" class="btn btn-xs btn-primary uploadDdotFile">
-			</div>
 		</div>
 	</body>
 </html>

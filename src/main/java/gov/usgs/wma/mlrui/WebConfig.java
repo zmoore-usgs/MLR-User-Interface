@@ -26,7 +26,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                         CacheControl.maxAge(30L, TimeUnit.DAYS).cachePublic())
                 .resourceChain(true)
                 .addResolver(new WebJarsResourceResolver());
-
     }
 
     @Bean

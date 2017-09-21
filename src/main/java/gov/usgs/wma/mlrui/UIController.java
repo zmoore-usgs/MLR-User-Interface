@@ -21,10 +21,10 @@ public class UIController {
 	
 	@GetMapping("/")
 	public String ui(Model model) {
-		model.addAttribute("mlrGatewayHost", mlrGatewayHost);
-		model.addAttribute("mlrGatewayPort", mlrGatewayPort);
-		model.addAttribute("mlrGatewayUploadPath", mlrGatewayUploadPath);
-		model.addAttribute("mlrGatewayValidatePath", mlrGatewayValidatePath);
+		model.addAttribute("MLR_GATEWAY_HOST", mlrGatewayHost);
+		model.addAttribute("MLR_GATEWAY_PORT", mlrGatewayPort);
+		model.addAttribute("MLR_GATEWAY_UPLOAD_PATH", mlrGatewayUploadPath);
+		model.addAttribute("MLR_GATEWAY_VALIDATE_PATH", mlrGatewayValidatePath);
 		return "ui";
 	}
 }
