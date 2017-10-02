@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.usgs.wma</groupId>
     <artifactId>mlrInterface</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>war</packaging>
 
     <properties>
@@ -103,6 +103,6 @@
         <connection>scm:git:https://github.com/USGS-CIDA/MLR-User-Interface.git</connection>
         <developerConnection>scm:git:https://github.com/USGS-CIDA/MLR-User-Interface.git</developerConnection>
         <url>https://github.com/USGS-CIDA/MLR-User-Interface</url>
-        <tag>HEAD</tag>
+        <tag>mlrInterface-0.1</tag>
     </scm>
 </project>
