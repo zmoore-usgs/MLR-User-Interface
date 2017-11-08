@@ -3,7 +3,7 @@ set -x
 
 keystorePassword=`cat $KEYSTORE_PASSWORD_FILE`
 
-openssl pkcs12 -export -in $ssl_cert_path -inkey $ssl_key_path -name tomcat -out tomcat.p12
+openssl pkcs12 -export -in $mlr_cert_path -inkey $mlr_key_path -name tomcat -out tomcat.p12 -password pass:$keystorePassword
 
 keytool -v -importkeystore -deststorepass $keystorePassword -destkeystore $keystoreLocation -srckeystore tomcat.p12 -srcstoretype PKCS12
 
