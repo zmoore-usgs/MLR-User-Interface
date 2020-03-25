@@ -1,34 +1,13 @@
-# mlr-ui
+# MLR-User-Interface
+[![Build Status](https://travis-ci.org/USGS-CIDA/MLR-User-Interface.svg?branch=master)](https://travis-ci.org/USGS-CIDA/MLR-User-Interface)
 
-## Project setup
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Simple UI for interacting with MLR. Currently only supports Ddot File Upload
 
-### Compiles and minifies for production
+## Running the Application
+Copy the application-test.yml file from the project root directory to an "application.yml" file also at the project root directory and change the values as needed.
+Open a terminal and cd to the project root directory. Within this directory run 
 ```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+mvn spring-boot:run
+``` 
+and then the application will launch and be available at http://localhost:8080/swagger-ui.html
