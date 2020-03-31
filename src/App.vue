@@ -72,6 +72,7 @@
 
 <script>
 import USGSFooter from "./components/USGSFooter";
+import axios from "axios";
 
 export default {
     name: "App",
@@ -84,6 +85,26 @@ export default {
         return {
             show: false
         };
+    },
+    created: function() {
+        this.readAccessToken();
+        let token = sessionStorage.getItem("mlr-access-token");
+        if (token) {
+            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        } else {
+            window.location = axios.defaults.baseURL + "util/login";
+        }
+    },
+    methods: {
+        readAccessToken() {
+            var accessToken = new URL(location.href).searchParams.get(
+                "mlrAccessToken"
+            );
+            if (accessToken) {
+                sessionStorage.setItem("mlr-access-token", accessToken);
+                window.history.replaceState({}, document.title, "/");
+            }
+        }
     }
 };
 </script>
