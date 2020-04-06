@@ -14,6 +14,13 @@
             </v-row>
         </v-content>
         <USGSFooter />
+        <v-snackbar v-model="snackbarShow" :color="snackbarColor">
+            {{snackbarMessage}}
+            <v-spacer></v-spacer>
+            <v-btn icon @click="snackbarShow=false">
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
+        </v-snackbar>
     </v-app>
 </template>
 
@@ -23,6 +30,7 @@ import USGSHeaderBar from "./components/USGSHeaderBar";
 import DdotProcessCard from "./components/DdotProcessCard";
 import CopyLocationCard from "./components/CopyLocationCard";
 import axios from "axios";
+import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "App",
@@ -36,7 +44,8 @@ export default {
 
     data() {
         return {
-            show: false
+            response: {},
+            snackbarShow: false
         };
     },
     created: function() {
@@ -47,7 +56,25 @@ export default {
         } else {
             window.location = axios.defaults.baseURL + "util/login";
         }
+
+        EventBus.$on("snackbar-update", response => {
+            console.log(response);
+            this.showSnackbarMessage(response);
+        });
     },
+
+    computed: {
+        responseSuccessful() {
+            return this.response.status > 199 && this.response.status < 300;
+        },
+        snackbarColor() {
+            return this.responseSuccessful ? "green" : "red";
+        },
+        snackbarMessage() {
+            return this.responseSuccessful ? "Success!" : this.response;
+        }
+    },
+
     methods: {
         readAccessToken() {
             var accessToken = new URL(location.href).searchParams.get(
@@ -57,6 +84,11 @@ export default {
                 sessionStorage.setItem("mlr-access-token", accessToken);
                 window.history.replaceState({}, document.title, "/");
             }
+        },
+
+        showSnackbarMessage(response) {
+            this.response = response;
+            this.snackbarShow = true;
         }
     }
 };

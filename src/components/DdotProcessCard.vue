@@ -35,6 +35,7 @@
 
 <script>
 import DdotApi from "@/services/api/DdotApi.js";
+import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "DdotProcessCard",
@@ -86,19 +87,32 @@ export default {
         },
         parseDdotFile() {
             return DdotApi.parseDdot(this.ddotFile).then(response => {
-                this.districtCodes = response.districtCodes;
-                this.transactionTypes = response.transactionTypes;
+                this.districtCodes = response.data.districtCodes;
+                this.transactionTypes = response.data.transactionTypes;
             });
         },
         uploadDdotFile() {
-            DdotApi.uploadDdot(this.ddotFile).then(response => {
-                console.log(response);
-            });
+            this.showUploadDialog = false;
+            DdotApi.uploadDdot(this.ddotFile)
+                .then(response => {
+                    this.emitSnackbarUpdate(response);
+                })
+                .catch(error => {
+                    this.emitSnackbarUpdate(error);
+                });
         },
         validateDdotFile() {
-            DdotApi.validateDdot(this.ddotFile).then(response => {
-                console.log(response);
-            });
+            this.showValidateDialog = false;
+            DdotApi.validateDdot(this.ddotFile)
+                .then(response => {
+                    this.emitSnackbarUpdate(response);
+                })
+                .catch(error => {
+                    this.emitSnackbarUpdate(error);
+                });
+        },
+        emitSnackbarUpdate(response) {
+            EventBus.$emit("snackbar-update", response);
         }
     }
 };

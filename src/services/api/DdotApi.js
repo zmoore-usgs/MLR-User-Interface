@@ -15,9 +15,9 @@ export default {
 		ddotData.append("file", ddotFile);
 		return axios.post(url, ddotData
 		).then(response => {
-			return response.data
+			return response
 		}).catch(error => {
-			console.log(error);
+			return error
 		})
 	}
 }

@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import LegacyLocationApi from "LegacyLocationApi.js";
+import LegacyLocationApi from "@/services/api/LegacyLocationApi.js";
+import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "CopyLocationCard",
@@ -33,7 +34,23 @@ export default {
     },
     methods: {
         exportLocation() {
-            LegacyLocationApi.postExport(this.agencyCode, this.siteNumber);
+            if (
+                this.agencyCode !== null &&
+                this.agencyCode.length > 0 &&
+                this.siteNumber !== null &&
+                this.siteNumber.length > 0
+            ) {
+                LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
+                    .then(response => {
+                        this.emitSnackbarUpdate(response);
+                    })
+                    .catch(error => {
+                        this.emitSnackbarUpdate(error);
+                    });
+            }
+        },
+        emitSnackbarUpdate(response) {
+            EventBus.$emit("snackbar-update", response);
         }
     }
 };
