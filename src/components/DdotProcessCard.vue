@@ -10,26 +10,6 @@
             <v-btn class="mx-2" color="primary" @click="validateButtonClicked">Validate</v-btn>
             <v-btn color="primary" @click="uploadButtonClicked">Validate and Update records</v-btn>
         </v-card-actions>
-        <v-dialog v-model="showValidateDialog">
-            <v-card>
-                <v-card-title>Validate</v-card-title>
-                <v-card-text>{{confirmStatement}}</v-card-text>
-                <v-card-actions>
-                    <v-btn color="primary" class="mx-2" @click="showValidateDialog = false">Close</v-btn>
-                    <v-btn color="primary" @click="validateDdotFile">Upload</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-        <v-dialog v-model="showUploadDialog">
-            <v-card>
-                <v-card-title>Upload</v-card-title>
-                <v-card-text>{{confirmStatement}}</v-card-text>
-                <v-card-actions>
-                    <v-btn color="primary" class="mx-2" @click="showUploadDialog = false">Close</v-btn>
-                    <v-btn color="primary" @click="uploadDdotFile">Upload</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
     </v-card>
 </template>
 
@@ -44,55 +24,24 @@ export default {
         return {
             ddotFile: null,
             districtCodes: null,
-            transactionTypes: null,
-            showValidateDialog: false,
-            showUploadDialog: false
+            transactionTypes: null
         };
-    },
-    computed: {
-        confirmStatement() {
-            var toRet = this.transactionTypesCheck
-                ? "Please coordinate with other LDMs if you are creating a site in another district code.\n"
-                : "";
-            toRet += this.districtCodesCheck
-                ? "Please be aware that you are adding or modifying sites in multiple district codes."
-                : "";
-            return toRet;
-        },
-        transactionTypesCheck() {
-            return this.transactionTypes && this.transactionTypes.includes("A");
-        },
-        districtCodesCheck() {
-            return this.districtCodes && this.districtCodes.length > 1;
-        }
     },
     methods: {
         validateButtonClicked() {
             this.parseDdotFile().then(() => {
-                if (this.transactionTypesCheck || districtCodesCheck) {
-                    this.showValidateDialog = true;
-                } else {
-                    this.validateDdotFile();
-                }
+                this.validateDdotFile();
             });
         },
         uploadButtonClicked() {
             this.parseDdotFile().then(() => {
-                if (this.transactionTypesCheck || districtCodesCheck) {
-                    this.showUploadDialog = true;
-                } else {
-                    this.uploadDdotFile();
-                }
+                this.uploadDdotFile();
             });
         },
         parseDdotFile() {
-            return DdotApi.parseDdot(this.ddotFile).then(response => {
-                this.districtCodes = response.data.districtCodes;
-                this.transactionTypes = response.data.transactionTypes;
-            });
+            return DdotApi.parseDdot(this.ddotFile);
         },
         uploadDdotFile() {
-            this.showUploadDialog = false;
             DdotApi.uploadDdot(this.ddotFile)
                 .then(response => {
                     this.emitSnackbarUpdate(response);
@@ -102,7 +51,6 @@ export default {
                 });
         },
         validateDdotFile() {
-            this.showValidateDialog = false;
             DdotApi.validateDdot(this.ddotFile)
                 .then(response => {
                     this.emitSnackbarUpdate(response);
