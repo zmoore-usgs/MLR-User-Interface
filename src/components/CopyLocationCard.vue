@@ -43,6 +43,7 @@ export default {
                 LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
                     .then(response => {
                         this.emitSnackbarUpdate(response);
+                        this.handleExportWorkflowError(response);
                     })
                     .catch(error => {
                         this.emitSnackbarUpdate(error);
@@ -51,6 +52,25 @@ export default {
         },
         emitSnackbarUpdate(response) {
             EventBus.$emit("snackbar-update", response);
+        },
+        handleExportWorkflowError(response) {
+            var workflowFailureMsg = {};
+            workflowFailureMsg.exportWorkflowErrors = {
+                name: "Export Workflow Errors",
+                errors: []
+            };
+            response.data.workflowSteps.forEach(function(w) {
+                if (w.name === "Complete Export Workflow") {
+                    if (w.success === false) {
+                        workflowFailureMsg.exportWorkflowErrors.errors.push({
+                            name: w.name,
+                            message:
+                                "Failed: " + JSON.parse(w.details).error_message
+                        });
+                    }
+                }
+            });
+            this.$emit("export-workflow", response.data, workflowFailureMsg);
         }
     }
 };
