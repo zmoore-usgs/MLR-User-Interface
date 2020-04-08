@@ -24,6 +24,13 @@
                     <v-list-item>
                         <ValidateReport v-if="validateReport" :report="validateReport" />
                     </v-list-item>
+                    <v-list-item>
+                        <v-btn
+                            text
+                            color="primary"
+                            @click="downloadStepReport"
+                        >Download the Error Warning/Step Report</v-btn>
+                    </v-list-item>
                 </v-list>
             </v-card>
         </v-content>
@@ -120,6 +127,17 @@ export default {
             this.exportReport = workflowFailureMsg;
             this.validateReport = null;
             this.responseData = responseData;
+        },
+        downloadStepReport() {
+            var dataStr =
+                "data:text/json;charset=utf-8," +
+                encodeURIComponent(JSON.stringify(this.responseData, null, 4));
+            var downloadAnchorNode = document.createElement("a");
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "mlr-results.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
         }
     }
 };
