@@ -1,89 +1,144 @@
 <template>
     <v-app>
-        <v-app-bar app color="black" dark>
-            <v-img
-                alt="USGS Logo"
-                class="shrink mr-2"
-                contain
-                :src="require('./assets/usgs_logo.jpg')"
-                transition="scale-transition"
-                width="150"
-            />
-
-            <v-spacer></v-spacer>
-
-            <v-btn href="https://www.usgs.gov" title="Link to main USGS page" text>
-                <span class="mr-2">USGS Home</span>
-                <v-icon>mdi-open-in-new</v-icon>
-            </v-btn>
-
-            <v-btn
-                href="https://answers.usgs.gov/cgi-bin/gsanswers?tmplt=2"
-                title="Link to USGS contact page"
-                text
-            >
-                <span class="mr-2">Contact USGS</span>
-                <v-icon>mdi-open-in-new</v-icon>
-            </v-btn>
-        </v-app-bar>
+        <USGSHeaderBar />
 
         <v-content>
             <v-row>
-                <v-col cols="3">
-                    <v-card flat>
-                        <v-card-title>Upload and Process a Ddot file</v-card-title>
-                        <v-card-text>
-                            <v-form>
-                                <v-file-input label="Select Ddot File to Upload"></v-file-input>
-                            </v-form>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-btn class="mx-2" color="primary">Validate</v-btn>
-                            <v-btn color="primary">Validate and Update records</v-btn>
-                        </v-card-actions>
-                    </v-card>
+                <v-col>
+                    <DdotProcessCard @validate-workflow="showValidateReport" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
-                <v-col cols="4">
-                    <v-card flat>
-                        <v-card-title>Copy a Location</v-card-title>
-                        <v-card-text>
-                            <v-text-field label="Agency Code"></v-text-field>
-                            <v-text-field label="Site Number"></v-text-field>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-btn color="primary">Copy</v-btn>
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn color="primary" v-on="on" icon class="mx-2">
-                                        <v-icon>mdi-help-circle</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>Enter an agency code and site number for an existing site that you'd like to copy. The site will be copied to all NWIS hosts as a result.</span>
-                            </v-tooltip>
-                        </v-card-actions>
-                    </v-card>
+                <v-col>
+                    <CopyLocationCard @export-workflow="showExportReport" />
                 </v-col>
             </v-row>
+            <v-card v-if="responseData">
+                <v-list>
+                    <v-list-item>MLR Workflow: {{responseData.name}}</v-list-item>
+                    <v-list-item>User: {{responseData.userName}}</v-list-item>
+                    <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
+                    <v-list-item>Input File: {{responseData.inputFileName}}</v-list-item>
+                    <v-list-item>
+                        <ExportReport v-if="exportReport" :report="exportReport" />
+                    </v-list-item>
+                    <v-list-item>
+                        <ValidateReport v-if="validateReport" :report="validateReport" />
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn
+                            text
+                            color="primary"
+                            @click="downloadStepReport"
+                        >Download the Error Warning/Step Report</v-btn>
+                    </v-list-item>
+                </v-list>
+            </v-card>
         </v-content>
         <USGSFooter />
+        <v-snackbar v-model="snackbarShow" :color="snackbarColor">
+            {{snackbarMessage}}
+            <v-spacer></v-spacer>
+            <v-btn icon @click="snackbarShow=false">
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
+        </v-snackbar>
     </v-app>
 </template>
 
 <script>
-import USGSFooter from "./components/USGSFooter";
+import USGSFooter from "@/components/USGSFooter";
+import USGSHeaderBar from "@/components/USGSHeaderBar";
+import DdotProcessCard from "@/components/DdotProcessCard";
+import CopyLocationCard from "@/components/CopyLocationCard";
+import ExportReport from "@/components/ExportReport";
+import ValidateReport from "@/components/ValidateReport";
+import axios from "axios";
+import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "App",
 
     components: {
-        USGSFooter
+        USGSFooter,
+        USGSHeaderBar,
+        DdotProcessCard,
+        CopyLocationCard,
+        ExportReport,
+        ValidateReport
     },
 
     data() {
         return {
-            show: false
+            response: {},
+            responseData: null,
+            validateReport: null,
+            exportReport: {},
+            snackbarShow: false
         };
+    },
+    created: function() {
+        this.readAccessToken();
+        let token = sessionStorage.getItem("mlr-access-token");
+        if (token) {
+            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        } else {
+            window.location = axios.defaults.baseURL + "util/login";
+        }
+
+        EventBus.$on("snackbar-update", response => {
+            this.showSnackbarMessage(response);
+        });
+    },
+
+    computed: {
+        responseSuccessful() {
+            return this.response.status > 199 && this.response.status < 300;
+        },
+        snackbarColor() {
+            return this.responseSuccessful ? "green" : "red";
+        },
+        snackbarMessage() {
+            return this.responseSuccessful ? "Success!" : this.response;
+        }
+    },
+
+    methods: {
+        readAccessToken() {
+            var accessToken = new URL(location.href).searchParams.get(
+                "mlrAccessToken"
+            );
+            if (accessToken) {
+                sessionStorage.setItem("mlr-access-token", accessToken);
+                window.history.replaceState({}, document.title, "/");
+            }
+        },
+        showSnackbarMessage(response) {
+            this.response = response;
+            this.snackbarShow = true;
+        },
+        showValidateReport(responseData, workflowFailureMsg) {
+            console.log(responseData);
+            console.log(workflowFailureMsg);
+            this.exportReport = null;
+            this.validateReport = workflowFailureMsg;
+            this.responseData = responseData;
+        },
+        showExportReport(responseData, workflowFailureMsg) {
+            this.exportReport = workflowFailureMsg;
+            this.validateReport = null;
+            this.responseData = responseData;
+        },
+        downloadStepReport() {
+            var dataStr =
+                "data:text/json;charset=utf-8," +
+                encodeURIComponent(JSON.stringify(this.responseData, null, 4));
+            var downloadAnchorNode = document.createElement("a");
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "mlr-results.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
     }
 };
 </script>
