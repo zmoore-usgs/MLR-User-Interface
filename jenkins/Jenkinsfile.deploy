@@ -1,0 +1,66 @@
+pipeline {
+    agent {
+        node{
+            label 'project:any'
+        }
+    }
+    parameters{
+        choice(choices: ['test', 'qa', 'prod'], description: 'Tier to release to', name: 'TIER')
+        gitParameter(defaultValue: "origin/master", description: 'Source Branch or Tag', type: 'PT_BRANCH_TAG', name: 'BRANCH_TAG')
+    }
+
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+    stages {
+        stage('clean workspace') {
+            steps{
+                cleanWs()
+            }
+        }
+        stage('checkout') {
+            steps {
+                checkout ([
+                    $class: 'GitSCM',
+                    branches: [[name: "${params.BRANCH_TAG}"]],
+                    doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                    extensions: [[$class:'WipeWorkspace']],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[url:'https://github.com/USGS-CIDA/MLR-User-Interface.git']]
+                ])
+            }
+        }
+        stage('build') {
+            steps {
+                sh """
+                    docker build . --tag="dockervuebuilder" --file "jenkins/Dockerfile" --build-arg TIER="${params.TIER}"
+                    docker run dockervuebuilder
+                    pathtemplate=":tmp/MLR-User-Interface/dist"
+                    dockerinstanceid=\$( docker ps -l -q )
+                    docker cp  "\${dockerinstanceid}\${pathtemplate}" "$WORKSPACE"
+                    docker rm "\${dockerinstanceid}"
+                """
+            }
+        }
+        stage('Send to S3') {
+            steps {
+                script {
+                    if("${params.TIER}" == "test") {
+                        targetDomain = "s3://mlr-test-website"
+                    }
+                    else if("${params.TIER}" == "qa") {
+                        targetDomain = "s3://mlr-qa-website"
+                    }
+                    else if("${params.TIER}" == "prod") {
+                        targetDomain = "s3://mlr-prod-website"
+                    }
+                }
+                sh """
+                    aws s3 rm "${targetDomain}" --recursive
+                    aws s3 cp "$WORKSPACE/dist" "${targetDomain}" --recursive --exclude 'index.html'
+                    aws s3 cp "$WORKSPACE/dist" "${targetDomain}" --recursive --exclude '*' --include 'index.html' --cache-control 'no-cache'
+                """
+            }
+        }
+    }
+}
