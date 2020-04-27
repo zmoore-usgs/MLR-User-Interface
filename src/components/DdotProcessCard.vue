@@ -1,6 +1,7 @@
 <template>
     <v-card flat>
         <v-card-title>Upload and Process a Ddot file</v-card-title>
+        <v-card-subtitle>When creating or modifying sites outside your Center, please coordinate with the other Center's Local Data Manager to ensure continuity of ownership</v-card-subtitle>
         <v-card-text>
             <v-form>
                 <v-file-input v-model="ddotFile" label="Select Ddot File to Upload"></v-file-input>
