@@ -34,11 +34,10 @@ pipeline {
             steps {
                 sh """
                     docker build . --tag="dockervuebuilder" --file "jenkins/Dockerfile" --build-arg TIER="${params.TIER}"
-                    docker run dockervuebuilder
+                    docker run --name mlrVueBuild dockervuebuilder
                     pathtemplate=":tmp/MLR-User-Interface/dist"
-                    dockerinstanceid=\$( docker ps -l -q )
-                    docker cp  "\${dockerinstanceid}\${pathtemplate}" "$WORKSPACE"
-                    docker rm "\${dockerinstanceid}"
+                    docker cp "mlrVueBuild\${pathtemplate}" "$WORKSPACE"
+                    docker rm mlrVueBuild
                 """
             }
         }

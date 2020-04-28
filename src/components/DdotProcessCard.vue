@@ -122,8 +122,6 @@ export default {
                     errors: this.parseSiteErrorRows(response.data.sites)
                 };
             }
-            console.log(response.data);
-            console.log(workflowFailureMsg);
             this.$emit("validate-workflow", response.data, workflowFailureMsg);
         },
         parseSiteErrorRows(errorList) {

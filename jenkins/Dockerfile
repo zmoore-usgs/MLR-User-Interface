@@ -13,4 +13,4 @@ COPY . .
 # Build the Vue app.
 RUN npm install
 # Need -- --mode=test to pass test environment variables in
-RUN npm run build -- --mode=$TIER
+RUN npm run build "--mode=$TIER"
