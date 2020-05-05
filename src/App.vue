@@ -34,6 +34,7 @@
                 </v-list>
             </v-card>
         </v-content>
+        <MLRFooter />
         <USGSFooter />
         <v-snackbar v-model="snackbarShow" :color="snackbarColor">
             {{snackbarMessage}}
@@ -47,6 +48,7 @@
 
 <script>
 import USGSFooter from "@/components/USGSFooter";
+import MLRFooter from "@/components/MLRFooter";
 import USGSHeaderBar from "@/components/USGSHeaderBar";
 import DdotProcessCard from "@/components/DdotProcessCard";
 import CopyLocationCard from "@/components/CopyLocationCard";
@@ -60,6 +62,7 @@ export default {
 
     components: {
         USGSFooter,
+        MLRFooter,
         USGSHeaderBar,
         DdotProcessCard,
         CopyLocationCard,
