@@ -35,9 +35,6 @@ export default {
         uploadButtonClicked() {
             this.uploadDdotFile();
         },
-        parseDdotFile() {
-            return DdotApi.parseDdot(this.ddotFile);
-        },
         uploadDdotFile() {
             DdotApi.uploadDdot(this.ddotFile)
                 .then(response => {
