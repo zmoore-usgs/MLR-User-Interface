@@ -1,9 +1,6 @@
 import axios from 'axios'
 
 export default {
-	parseDdot(ddotFile) {
-		return this.postDdot("util/parse", ddotFile);
-	},
 	uploadDdot(ddotFile) {
 		return this.postDdot("workflows/ddots", ddotFile);
 	},
