@@ -30,14 +30,10 @@ export default {
     },
     methods: {
         validateButtonClicked() {
-            this.parseDdotFile().then(() => {
-                this.validateDdotFile();
-            });
+            this.validateDdotFile();
         },
         uploadButtonClicked() {
-            this.parseDdotFile().then(() => {
-                this.uploadDdotFile();
-            });
+            this.uploadDdotFile();
         },
         parseDdotFile() {
             return DdotApi.parseDdot(this.ddotFile);
