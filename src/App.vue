@@ -11,18 +11,25 @@
                 <v-col>
                     <CopyLocationCard @export-workflow="showExportReport" />
                 </v-col>
+                <v-divider vertical color="black"></v-divider>
+                <v-col>
+                    <UpdatePrimaryKeyCard @change-workflow="showUpdatePrimaryKeyReport" />
+                </v-col>
             </v-row>
             <v-card v-if="responseData">
                 <v-list>
                     <v-list-item>MLR Workflow: {{responseData.name}}</v-list-item>
                     <v-list-item>User: {{responseData.userName}}</v-list-item>
                     <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
-                    <v-list-item>Input File: {{responseData.inputFileName}}</v-list-item>
-                    <v-list-item>
-                        <ExportReport v-if="exportReport" :report="exportReport" />
+                    <v-list-item v-if="responseData.inputFileName">Input File: {{responseData.inputFileName}}</v-list-item>
+                    <v-list-item v-if="exportReport">
+                        <ExportReport :report="exportReport" />
                     </v-list-item>
-                    <v-list-item>
-                        <ValidateReport v-if="validateReport" :report="validateReport" />
+                    <v-list-item v-if="validateReport">
+                        <ValidateReport :report="validateReport" />
+                    </v-list-item>
+                    <v-list-item v-if="updatePrimaryKeyReport">
+                        <UpdatePrimaryKeyReport :report="updatePrimaryKeyReport" />
                     </v-list-item>
                     <v-list-item>
                         <v-btn
@@ -50,8 +57,10 @@ import USGSFooter from "@/components/USGSFooter";
 import USGSHeaderBar from "@/components/USGSHeaderBar";
 import DdotProcessCard from "@/components/DdotProcessCard";
 import CopyLocationCard from "@/components/CopyLocationCard";
+import UpdatePrimaryKeyCard from "@/components/UpdatePrimaryKeyCard";
 import ExportReport from "@/components/ExportReport";
 import ValidateReport from "@/components/ValidateReport";
+import UpdatePrimaryKeyReport from "@/components/UpdatePrimaryKeyReport";
 import axios from "axios";
 import { EventBus } from "@/components/EventBus.js";
 
@@ -63,8 +72,10 @@ export default {
         USGSHeaderBar,
         DdotProcessCard,
         CopyLocationCard,
+        UpdatePrimaryKeyCard,
         ExportReport,
-        ValidateReport
+        ValidateReport,
+        UpdatePrimaryKeyReport
     },
 
     data() {
@@ -73,6 +84,7 @@ export default {
             responseData: null,
             validateReport: null,
             exportReport: {},
+            updatePrimaryKeyReport: {},
             snackbarShow: false
         };
     },
@@ -121,11 +133,19 @@ export default {
             console.log(workflowFailureMsg);
             this.exportReport = null;
             this.validateReport = workflowFailureMsg;
+            this.updatePrimaryKeyReport = null;
             this.responseData = responseData;
         },
         showExportReport(responseData, workflowFailureMsg) {
             this.exportReport = workflowFailureMsg;
             this.validateReport = null;
+            this.updatePrimaryKeyReport = null;
+            this.responseData = responseData;
+        },
+        showUpdatePrimaryKeyReport(responseData) {
+            this.exportReport = null;
+            this.validateReport = null;
+            this.updatePrimaryKeyReport = responseData;
             this.responseData = responseData;
         },
         downloadStepReport() {
