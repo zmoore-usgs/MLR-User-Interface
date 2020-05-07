@@ -108,7 +108,7 @@ export default {
                 axios.defaults.headers.common["X-Auth-Token"] = accessToken;
                 window.history.replaceState({}, document.title, "/");
             } else {
-                window.location = axios.defaults.baseURL + "util/login";
+                window.location = axios.defaults.baseURL + "auth/login";
             }
         },
         showSnackbarMessage(response) {
