@@ -9,11 +9,11 @@
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <CopyLocationCard @export-workflow="showExportReport" />
+                    <CopyLocationCard @exportWorkflow="showExportReport" />
                 </v-col>
             </v-row>
             <v-card v-if="responseData">
-                <v-list>
+                <v-list dense>
                     <v-list-item>MLR Workflow: {{responseData.name}}</v-list-item>
                     <v-list-item>User: {{responseData.userName}}</v-list-item>
                     <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
