@@ -8,8 +8,8 @@
             </v-form>
         </v-card-text>
         <v-card-actions>
-            <v-btn class="mx-2" color="primary" @click="validateButtonClicked">Validate</v-btn>
-            <v-btn color="primary" @click="uploadButtonClicked">Validate and Update records</v-btn>
+            <v-btn class="mx-2 validate" color="primary" @click="validateButtonClicked">Validate</v-btn>
+            <v-btn class="upload" color="primary" @click="uploadButtonClicked">Validate and Update records</v-btn>
         </v-card-actions>
     </v-card>
 </template>
@@ -38,25 +38,20 @@ export default {
         uploadDdotFile() {
             DdotApi.uploadDdot(this.ddotFile)
                 .then(response => {
-                    this.emitSnackbarUpdate(response);
                     this.workflowErrors(response);
                 })
                 .catch(error => {
-                    this.emitSnackbarUpdate(error);
+                    console.log(error);
                 });
         },
         validateDdotFile() {
             DdotApi.validateDdot(this.ddotFile)
                 .then(response => {
-                    this.emitSnackbarUpdate(response);
                     this.workflowErrors(response);
                 })
                 .catch(error => {
-                    this.emitSnackbarUpdate(error);
+                    console.log(error);
                 });
-        },
-        emitSnackbarUpdate(response) {
-            EventBus.$emit("snackbar-update", response);
         },
         workflowErrors(response) {
             var workflowFailureMsg = {};
@@ -115,7 +110,7 @@ export default {
                     errors: this.parseSiteErrorRows(response.data.sites)
                 };
             }
-            this.$emit("validate-workflow", response.data, workflowFailureMsg);
+            this.$emit("validateWorkflow", response.data, workflowFailureMsg);
         },
         parseSiteErrorRows(errorList) {
             var result = [];

@@ -5,7 +5,7 @@
         <v-content>
             <v-row>
                 <v-col>
-                    <DdotProcessCard @validate-workflow="showValidateReport" />
+                    <DdotProcessCard @validateWorkflow="showValidateReport" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
