@@ -2,8 +2,16 @@
     <v-card flat>
         <v-card-title>Copy a Location</v-card-title>
         <v-card-text>
-            <v-text-field v-model="agencyCode" label="Agency Code"></v-text-field>
-            <v-text-field v-model="siteNumber" label="Site Number"></v-text-field>
+            <v-text-field 
+                v-model="agencyCode" 
+                :rules="[rules.required]"
+                label="Agency Code">
+            </v-text-field>
+            <v-text-field 
+                v-model="siteNumber" 
+                :rules="[rules.required]"
+                label="Site Number">
+            </v-text-field>
         </v-card-text>
         <v-card-actions>
             <v-btn color="primary" @click="exportLocation">Copy</v-btn>
@@ -29,25 +37,21 @@ export default {
     data() {
         return {
             agencyCode: "",
-            siteNumber: ""
-        };
+            siteNumber: "",
+            rules: {
+                    required: value => !!value || 'Required'
+            },
+        }
     },
     methods: {
         exportLocation() {
-            if (
-                this.agencyCode !== null &&
-                this.agencyCode.length > 0 &&
-                this.siteNumber !== null &&
-                this.siteNumber.length > 0
-            ) {
-                LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
-                    .then(response => {
-                        this.handleExportWorkflowError(response);
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    });
-            }
+            LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
+                .then(response => {
+                    this.handleExportWorkflowError(response);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         },
         handleExportWorkflowError(response) {
             var workflowFailureMsg = {};

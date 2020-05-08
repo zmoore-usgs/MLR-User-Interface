@@ -5,15 +5,10 @@ import Vuetify from 'vuetify'
 // Can't use LocalVue - Issue: https://github.com/vuetifyjs/vuetify/issues/4068#issuecomment-422406319
 Vue.use(Vuetify);
 
-// Mocks
-// See - https://medium.com/trabe/mocking-different-values-for-the-same-module-using-jest-a7b8d358d78b
-import { postExport } from "@/services/api/LegacyLocationApi";
-jest.mock('@/services/api/LegacyLocationApi', () => ({
-    postExport: jest.fn()
-}))
-
 // Components
-import CopyLocationCard from '@/components/CopyLocationCard.vue'
+import ExportReport from '@/components/ExportReport.vue'
+import ValidateReport from '@/components/ValidateReport.vue'
+import App from '@/App.vue'
 
 // Utilities
 import {
@@ -21,20 +16,18 @@ import {
     createLocalVue
 } from '@vue/test-utils'
 
-describe('CopyLocationCard.vue', () => {
+describe('App.vue', () => {
     let localVue;
     let vuetify;
     
     const mountFactory = function(args) {
-        return mount(CopyLocationCard, {
+        return mount(App, {
             localVue,
             vuetify,
             ...args
         });
     }
-
     const copySuccessResponse = {
-        data: {
             name: "Complete Export Workflow",
             inputFileName: null,
             reportDateTime: "2020-05-07T18:52:17.889Z",
@@ -74,11 +67,16 @@ describe('CopyLocationCard.vue', () => {
                     ]
                 }
             ]
-        }
     };
 
+    const exportSuccessReport = {
+            exportWorkflowErrors: {
+                name: "Export Workflow Errors",
+                errors: []
+            }
+    }
+
     const copyErrorResponse = {
-        data: {
             name: "Complete Export Workflow",
             inputFileName: null,
             reportDateTime: "2020-05-07T20:07:45.627Z",
@@ -98,23 +96,19 @@ describe('CopyLocationCard.vue', () => {
                 }
             ],
             sites: []
+    }
+
+    const exportErrorReport = {
+        exportWorkflowErrors: {
+            name: "Export Workflow Errors",
+            errors: [
+                {
+                message: "Failed: Requested Location Not Found",
+                name: "Complete Export Workflow"
+                }
+            ]
         }
-    };
-
-    const copySuccessParsed = {"exportWorkflowErrors" : 
-        {"errors": [],
-        "name": "Export Workflow Errors"
-        }}
-
-    const copyErrorParsed = {"exportWorkflowErrors" : 
-        {"errors": [
-            {
-                "message": "Failed: Requested Location Not Found",
-                "name": "Complete Export Workflow"
-            }
-        ],
-        "name": "Export Workflow Errors"
-        }}
+}
 
     beforeEach(() => {
         localVue = createLocalVue();
@@ -123,53 +117,56 @@ describe('CopyLocationCard.vue', () => {
         jest.clearAllMocks();
     });
 
-    it('Renders the input fields and button', () => {
+    it('Renders the input fields and buttons', () => {
         const wrapper = mountFactory({});
 
         expect(wrapper.html()).toContain('Agency Code</label>');
         expect(wrapper.html()).toContain('Site Number</label>');
+        expect(wrapper.html()).toContain('Select Ddot File to Upload</label>');
         expect(wrapper.html()).toContain('v-text-field');
         expect(wrapper.html()).toContain('v-btn');
     });
 
-    it('Emits proper response for success', async () => {
-        postExport.mockImplementation(() => Promise.resolve(
-            copySuccessResponse
-        ));
+    it('Renders the report for successful Copy Location', async () => {
         const wrapper = mountFactory({});
-        expect(wrapper.emitted().exportWorkflow).toBeUndefined();
-        
+
         wrapper.setData({
-            agencyCode: "USGS",
-            siteNumber: "1234"
+            response: {},
+            responseData: null,
+            validateReport: null,
+            exportReport: {},
+            snackbarShow: false
 		});
-        
-        wrapper.find('button').trigger('click');
+
+        wrapper.vm.showExportReport(copySuccessResponse, exportSuccessReport);
 
         await Vue.nextTick();
 
-        expect(wrapper.emitted().exportWorkflow).toBeTruthy();
-        expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copySuccessResponse.data);
-        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copySuccessParsed);
+        expect(wrapper.vm.responseData).toEqual(copySuccessResponse);
+        expect(wrapper.vm.exportReport).toEqual(exportSuccessReport);
+        expect(wrapper.contains(ExportReport)).toBe(true);
+        expect(wrapper.contains(ValidateReport)).toBe(false);
     });
 
-    it('Emits proper response for validation failure', async () => {
-        postExport.mockImplementation(() => Promise.resolve(
-            copyErrorResponse
-        ));
+    it('Renders the report for failure Copy Location', async() => {
         const wrapper = mountFactory({});
-        
+
         wrapper.setData({
-            agencyCode: "USGS",
-            siteNumber: "1234"
+            response: {},
+            responseData: null,
+            validateReport: null,
+            exportReport: {},
+            snackbarShow: false
 		});
-        
-        wrapper.find('button').trigger('click');
+
+        wrapper.vm.showExportReport(copyErrorResponse, exportErrorReport);
 
         await Vue.nextTick();
 
-        expect(wrapper.emitted().exportWorkflow).toBeTruthy();
-        expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copyErrorResponse.data);
-        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyErrorParsed);
+        expect(wrapper.vm.responseData).toEqual(copyErrorResponse);
+        expect(wrapper.vm.exportReport).toEqual(exportErrorReport);
+        expect(wrapper.contains(ExportReport)).toBe(true);
+        expect(wrapper.contains(ValidateReport)).toBe(false);
     });
+
 });
