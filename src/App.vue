@@ -81,12 +81,6 @@ export default {
     },
     created: function() {
         this.readAccessToken();
-        let token = sessionStorage.getItem("mlr-access-token");
-        if (token) {
-            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-        } else {
-            window.location = axios.defaults.baseURL + "util/login";
-        }
 
         EventBus.$on("snackbar-update", response => {
             this.showSnackbarMessage(response);
@@ -111,8 +105,10 @@ export default {
                 "mlrAccessToken"
             );
             if (accessToken) {
-                sessionStorage.setItem("mlr-access-token", accessToken);
+                axios.defaults.headers.common["X-Auth-Token"] = accessToken;
                 window.history.replaceState({}, document.title, "/");
+            } else {
+                window.location = axios.defaults.baseURL + "auth/login";
             }
         },
         showSnackbarMessage(response) {
