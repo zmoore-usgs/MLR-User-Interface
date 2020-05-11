@@ -41,6 +41,7 @@ export default {
                     this.workflowErrors(response);
                 })
                 .catch(error => {
+                    this.workflowErrors(error.response);
                     console.log(error);
                 });
         },
@@ -50,8 +51,16 @@ export default {
                     this.workflowErrors(response);
                 })
                 .catch(error => {
+                    this.workflowErrors(error.response);
                     console.log(error);
                 });
+        },
+        parseMessage(message){
+            if (message.includes("_message") || (message.includes("validation_errors"))){
+                return JSON.parse(message);
+            } else {
+                return message;
+            }
         },
         workflowErrors(response) {
             var workflowFailureMsg = {};
@@ -118,22 +127,27 @@ export default {
                 var site = s.agencyCode.trim() + "-" + s.siteNumber.trim();
                 var steps = s.steps;
                 steps.forEach(function(st) {
-                    var detailMsg = JSON.parse(st.details);
+                    var detailMsg = this.parseMessage(st.details);
                     if (detailMsg.hasOwnProperty("error_message")) {
-                        if (typeof detailMsg.error_message === "object") {
-                            Object.keys(detailMsg.error_message).forEach(
-                                function(key) {
-                                    result.push({
-                                        name: site,
-                                        message:
-                                            st.name +
-                                            " Fatal Error: " +
-                                            key +
-                                            " - " +
-                                            detailMsg.error_message[key]
+                        if (typeof this.parseMessage(detailMsg.error_message) === "object") {
+                            var detailErrMessage = this.parseMessage(detailMsg.error_message)
+                            if (
+                                detailErrMessage.hasOwnProperty("validation_errors")
+                                ) {
+                                    Object.keys(
+                                        detailErrMessage.validation_errors
+                                    ).forEach(function(key) {
+                                        result.push({
+                                            name: site,
+                                            message:
+                                                st.name +
+                                                " Fatal Error: " +
+                                                key +
+                                                " - " +
+                                                detailErrMessage.validation_errors[key]
+                                        });
                                     });
                                 }
-                            );
                         } else {
                             result.push({
                                 name: site,
@@ -186,8 +200,8 @@ export default {
                             });
                         }
                     }
-                });
-            });
+                }.bind(this));
+            }.bind(this));
             return result;
         }
     }

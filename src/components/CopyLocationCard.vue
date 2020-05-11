@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 import LegacyLocationApi from "@/services/api/LegacyLocationApi.js";
 import { EventBus } from "@/components/EventBus.js";
 
@@ -50,6 +51,7 @@ export default {
                     this.handleExportWorkflowError(response);
                 })
                 .catch(error => {
+                    this.handleExportWorkflowError(error.response)
                     console.log(error);
                 });
         },
@@ -59,18 +61,25 @@ export default {
                 name: "Export Workflow Errors",
                 errors: []
             };
-            response.data.workflowSteps.forEach(function(w) {
+            _.forEach(response.data.workflowSteps, function(w) {
                 if (w.name === "Complete Export Workflow") {
                     if (w.success === false) {
                         workflowFailureMsg.exportWorkflowErrors.errors.push({
                             name: w.name,
                             message:
-                                "Failed: " + JSON.parse(w.details).error_message
+                                "Failed: " + this.parseErrorMessage(w.details)
                         });
                     }
                 }
-            });
+            }.bind(this));
             this.$emit("exportWorkflow", response.data, workflowFailureMsg);
+        },
+        parseErrorMessage(message){
+            if (message.includes("error_message")){
+                return JSON.parse(message).error_message;
+            } else {
+                return message;
+            }
         }
     }
 };

@@ -101,6 +101,30 @@ describe('CopyLocationCard.vue', () => {
         }
     };
 
+    const copyServiceErrorResponse = {
+         data:  {
+            name: "Complete Export Workflow",
+            inputFileName: null,
+            reportDateTime: "2020-05-11T11:57:07.890Z",
+            userName: "mlradmin",
+            workflowSteps: [
+                {
+                    name: "Complete Export Workflow",
+                    httpStatus: 500,
+                    success: false,
+                    details: "LegacyCruClient#getMonitoringLocation(String,String) failed and no fallback available."
+                },
+                {
+                    name: "Notification",
+                    httpStatus: 200,
+                    success: true,
+                    details: "Notification sent successfully."
+                }
+            ],
+            sites: []
+        }
+    }
+
     const copySuccessParsed = {"exportWorkflowErrors" : 
         {"errors": [],
         "name": "Export Workflow Errors"
@@ -110,6 +134,16 @@ describe('CopyLocationCard.vue', () => {
         {"errors": [
             {
                 "message": "Failed: Requested Location Not Found",
+                "name": "Complete Export Workflow"
+            }
+        ],
+        "name": "Export Workflow Errors"
+        }}
+
+    const copyServiceErrorParsed = {"exportWorkflowErrors" : 
+        {"errors": [
+            {
+                "message": "Failed: LegacyCruClient#getMonitoringLocation(String,String) failed and no fallback available.",
                 "name": "Complete Export Workflow"
             }
         ],
@@ -171,5 +205,25 @@ describe('CopyLocationCard.vue', () => {
         expect(wrapper.emitted().exportWorkflow).toBeTruthy();
         expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copyErrorResponse.data);
         expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyErrorParsed);
+    });
+
+    it('Emits proper response for backing service failure', async () => {
+        postExport.mockImplementation(() => Promise.resolve(
+            copyServiceErrorResponse
+        ));
+        const wrapper = mountFactory({});
+        
+        wrapper.setData({
+            agencyCode: "USGS",
+            siteNumber: "1234"
+		});
+        
+        wrapper.find('button').trigger('click');
+
+        await Vue.nextTick();
+
+        expect(wrapper.emitted().exportWorkflow).toBeTruthy();
+        expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copyServiceErrorResponse.data);
+        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyServiceErrorParsed);
     });
 });
