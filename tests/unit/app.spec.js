@@ -108,6 +108,83 @@ describe('App.vue', () => {
                 }
             ]
         }
+    }
+
+    const validateSuccessResponse = {
+        data: {
+            name: "Validate D dot File",
+            inputFileName: "d.cabuchwa_good.011",
+            reportDateTime: "2020-05-08T17:40:54.241Z",
+            userName: "mlradmin",
+            workflowSteps: [],
+            sites: [],
+            numberSiteSuccess: 2,
+            numberSiteFailure: 0
+        }
+    }
+
+    const validateSuccessParsed = {
+        workflowStatus: {
+            message: "2 Transactions Succeeded, 0 Transactions Failed",
+            name: "Status"
+        }
+    }
+
+    const validateFatalErrorResponse = {
+        data: {name: "Validate D dot File",
+            inputFileName: "d.cabuchwaBadFatalValidation.011",
+            reportDateTime: "2020-05-08T18:22:00.455Z",
+            userName: "mlradmin",
+            workflowSteps: [],
+            sites: [
+                {
+                    agencyCode: "USGS ",
+                    siteNumber: "432356088153001",
+                    transactionType: "A",
+                    success: false,
+                    steps: [
+                        {
+                            name: "Validate",
+                            httpStatus: 400,
+                            success: false,
+                            details: "{\"validator_message\": {\"fatal_error_message\": {\"latitude\": [\"Latitude is out of range for state 54\"], \"longitude\": [\"Longitude is out of range for state 54\"]}}\n}"
+                        },
+                        {
+                            name: "Validate Single D dot Transaction",
+                            httpStatus: 400,
+                            success: false,
+                            details: "{\"error_message\":\"Transaction validation failed.\"}"
+                        }
+                    ]
+                }
+            ],
+            numberSiteSuccess: 0,
+            numberSiteFailure: 1
+        }
+    }
+
+    const validateFatalErrorParsed = {
+        siteErrors: {
+            errors: [
+                {
+                    message: "Validate Fatal Error: latitude - Latitude is out of range for state 54",
+                    name: "USGS-432356088153001"
+                },
+                {
+                    message: "Validate Fatal Error: longitude - Longitude is out of range for state 54",
+                    name: "USGS-432356088153001"
+                },
+                {
+                    message: "Validate Single D dot Transaction Fatal Error: Transaction validation failed.",
+                    name: "USGS-432356088153001"
+                }
+            ],
+            name: "Site-level Errors and Warnings"
+        },
+        workflowStatus: {
+            message: "0 Transactions Succeeded, 1 Transactions Failed",
+            name: "Status"
+        }
 }
 
     beforeEach(() => {
@@ -146,6 +223,7 @@ describe('App.vue', () => {
         expect(wrapper.vm.exportReport).toEqual(exportSuccessReport);
         expect(wrapper.contains(ExportReport)).toBe(true);
         expect(wrapper.contains(ValidateReport)).toBe(false);
+        expect(wrapper.html()).toContain('<span>Copy Success</span>');
     });
 
     it('Renders the report for failure Copy Location', async() => {
@@ -167,6 +245,51 @@ describe('App.vue', () => {
         expect(wrapper.vm.exportReport).toEqual(exportErrorReport);
         expect(wrapper.contains(ExportReport)).toBe(true);
         expect(wrapper.contains(ValidateReport)).toBe(false);
+        expect(wrapper.html()).toContain('Complete Export Workflow Failed: Requested Location Not Found</div>');
+    });
+
+    it('Renders the report for successful Validate', async () => {
+        const wrapper = mountFactory({});
+
+        wrapper.setData({
+            response: {},
+            responseData: null,
+            validateReport: null,
+            exportReport: {},
+            snackbarShow: false
+		});
+
+        wrapper.vm.showValidateReport(validateSuccessResponse, validateSuccessParsed);
+
+        await Vue.nextTick();
+
+        expect(wrapper.vm.responseData).toEqual(validateSuccessResponse);
+        expect(wrapper.vm.validateReport).toEqual(validateSuccessParsed);
+        expect(wrapper.contains(ExportReport)).toBe(false);
+        expect(wrapper.contains(ValidateReport)).toBe(true);
+        expect(wrapper.html()).toContain('<p>Status: 2 Transactions Succeeded, 0 Transactions Failed</p>');
+    });
+
+    it('Renders the report for validation failure', async() => {
+        const wrapper = mountFactory({});
+
+        wrapper.setData({
+            response: {},
+            responseData: null,
+            validateReport: null,
+            exportReport: {},
+            snackbarShow: false
+		});
+
+        wrapper.vm.showValidateReport(validateFatalErrorResponse, validateFatalErrorParsed);
+
+        await Vue.nextTick();
+
+        expect(wrapper.vm.responseData).toEqual(validateFatalErrorResponse);
+        expect(wrapper.vm.validateReport).toEqual(validateFatalErrorParsed);
+        expect(wrapper.contains(ExportReport)).toBe(false);
+        expect(wrapper.contains(ValidateReport)).toBe(true);
+        expect(wrapper.html()).toContain('USGS-432356088153001 Validate Fatal Error: latitude - Latitude is out of range for state 54</div>');
     });
 
 });

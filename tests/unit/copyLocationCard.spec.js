@@ -185,6 +185,7 @@ describe('CopyLocationCard.vue', () => {
         expect(wrapper.emitted().exportWorkflow).toBeTruthy();
         expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copySuccessResponse.data);
         expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copySuccessParsed);
+        
     });
 
     it('Emits proper response for validation failure', async () => {
