@@ -41,6 +41,7 @@
                 </v-list>
             </v-card>
         </v-content>
+        <MLRFooter />
         <USGSFooter />
         <v-snackbar v-model="snackbarShow" :color="snackbarColor">
             {{snackbarMessage}}
@@ -54,6 +55,7 @@
 
 <script>
 import USGSFooter from "@/components/USGSFooter";
+import MLRFooter from "@/components/MLRFooter";
 import USGSHeaderBar from "@/components/USGSHeaderBar";
 import DdotProcessCard from "@/components/DdotProcessCard";
 import CopyLocationCard from "@/components/CopyLocationCard";
@@ -69,6 +71,7 @@ export default {
 
     components: {
         USGSFooter,
+        MLRFooter,
         USGSHeaderBar,
         DdotProcessCard,
         CopyLocationCard,
@@ -90,12 +93,6 @@ export default {
     },
     created: function() {
         this.readAccessToken();
-        let token = sessionStorage.getItem("mlr-access-token");
-        if (token) {
-            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-        } else {
-            window.location = axios.defaults.baseURL + "util/login";
-        }
 
         EventBus.$on("snackbar-update", response => {
             this.showSnackbarMessage(response);
@@ -120,8 +117,10 @@ export default {
                 "mlrAccessToken"
             );
             if (accessToken) {
-                sessionStorage.setItem("mlr-access-token", accessToken);
+                axios.defaults.headers.common["X-Auth-Token"] = accessToken;
                 window.history.replaceState({}, document.title, "/");
+            } else {
+                window.location = axios.defaults.baseURL + "auth/login";
             }
         },
         showSnackbarMessage(response) {
