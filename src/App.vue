@@ -13,7 +13,7 @@
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <UpdatePrimaryKeyCard @change-workflow="showUpdatePrimaryKeyReport" />
+                    <UpdatePrimaryKeyCard @changeWorkflow="showUpdatePrimaryKeyReport" />
                 </v-col>
             </v-row>
             <v-card v-if="responseData">
@@ -141,10 +141,10 @@ export default {
             this.updatePrimaryKeyReport = null;
             this.responseData = responseData;
         },
-        showUpdatePrimaryKeyReport(responseData) {
+        showUpdatePrimaryKeyReport(responseData, workflowFailureMsg) {
             this.exportReport = null;
             this.validateReport = null;
-            this.updatePrimaryKeyReport = responseData;
+            this.updatePrimaryKeyReport = workflowFailureMsg;
             this.responseData = responseData;
         },
         downloadStepReport() {
