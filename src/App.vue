@@ -116,8 +116,6 @@ export default {
             this.snackbarShow = true;
         },
         showValidateReport(responseData, workflowFailureMsg) {
-            console.log(responseData);
-            console.log(workflowFailureMsg);
             this.exportReport = null;
             this.validateReport = workflowFailureMsg;
             this.responseData = responseData;
