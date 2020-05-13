@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export default {
-	postExport(agencyCode, siteNumber) {
+	async postExport(agencyCode, siteNumber) {
 
 		//Build URL
 		var url = "legacy/location/" + agencyCode + "/" + siteNumber;
@@ -10,7 +10,7 @@ export default {
 			.then(response => {
 				return response
 			}).catch(error => {
-				return error
+				return error.response
 			})
 	},
 
@@ -31,4 +31,5 @@ export default {
 			})
 
 	}
+
 }

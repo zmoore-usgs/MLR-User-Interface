@@ -7,14 +7,14 @@ export default {
 	validateDdot(ddotFile) {
 		return this.postDdot("workflows/ddots/validate", ddotFile);
 	},
-	postDdot(url, ddotFile) {
+	async postDdot(url, ddotFile) {
 		var ddotData = new FormData();
 		ddotData.append("file", ddotFile);
 		return axios.post(url, ddotData
 		).then(response => {
 			return response
 		}).catch(error => {
-			return error
+			return error.response
 		})
 	}
 }
