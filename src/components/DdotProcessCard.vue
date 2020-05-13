@@ -42,7 +42,6 @@ export default {
                 })
                 .catch(error => {
                     this.workflowErrors(error.response);
-                    console.log(error);
                 });
         },
         validateDdotFile() {
@@ -52,7 +51,6 @@ export default {
                 })
                 .catch(error => {
                     this.workflowErrors(error.response);
-                    console.log(error);
                 });
         },
         parseMessage(message){
