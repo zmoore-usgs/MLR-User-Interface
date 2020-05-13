@@ -2,8 +2,16 @@
     <v-card flat>
         <v-card-title>Copy a Location</v-card-title>
         <v-card-text>
-            <v-text-field v-model="agencyCode" label="Agency Code"></v-text-field>
-            <v-text-field v-model="siteNumber" label="Site Number"></v-text-field>
+            <v-text-field 
+                v-model="agencyCode" 
+                :rules="[rules.required]"
+                label="Agency Code">
+            </v-text-field>
+            <v-text-field 
+                v-model="siteNumber" 
+                :rules="[rules.required]"
+                label="Site Number">
+            </v-text-field>
         </v-card-text>
         <v-card-actions>
             <v-btn color="primary" @click="exportLocation">Copy</v-btn>
@@ -20,6 +28,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 import LegacyLocationApi from "@/services/api/LegacyLocationApi.js";
 import { EventBus } from "@/components/EventBus.js";
 
@@ -29,29 +38,22 @@ export default {
     data() {
         return {
             agencyCode: "",
-            siteNumber: ""
-        };
+            siteNumber: "",
+            rules: {
+                    required: value => !!value || 'Required'
+            },
+        }
     },
     methods: {
         exportLocation() {
-            if (
-                this.agencyCode !== null &&
-                this.agencyCode.length > 0 &&
-                this.siteNumber !== null &&
-                this.siteNumber.length > 0
-            ) {
-                LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
-                    .then(response => {
-                        this.emitSnackbarUpdate(response);
-                        this.handleExportWorkflowError(response);
-                    })
-                    .catch(error => {
-                        this.emitSnackbarUpdate(error);
-                    });
-            }
-        },
-        emitSnackbarUpdate(response) {
-            EventBus.$emit("snackbar-update", response);
+            LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
+                .then(response => {
+                    this.handleExportWorkflowError(response);
+                })
+                .catch(error => {
+                    this.handleExportWorkflowError(error.response)
+                    console.log(error);
+                });
         },
         handleExportWorkflowError(response) {
             var workflowFailureMsg = {};
@@ -59,18 +61,25 @@ export default {
                 name: "Export Workflow Errors",
                 errors: []
             };
-            response.data.workflowSteps.forEach(function(w) {
+            _.forEach(response.data.workflowSteps, function(w) {
                 if (w.name === "Complete Export Workflow") {
                     if (w.success === false) {
                         workflowFailureMsg.exportWorkflowErrors.errors.push({
                             name: w.name,
                             message:
-                                "Failed: " + JSON.parse(w.details).error_message
+                                "Failed: " + this.parseErrorMessage(w.details)
                         });
                     }
                 }
-            });
-            this.$emit("export-workflow", response.data, workflowFailureMsg);
+            }.bind(this));
+            this.$emit("exportWorkflow", response.data, workflowFailureMsg);
+        },
+        parseErrorMessage(message){
+            if (message.includes("error_message")){
+                return JSON.parse(message).error_message;
+            } else {
+                return message;
+            }
         }
     }
 };
