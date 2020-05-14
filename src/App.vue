@@ -43,13 +43,6 @@
         </v-content>
         <MLRFooter />
         <USGSFooter />
-        <v-snackbar v-model="snackbarShow" :color="snackbarColor">
-            {{snackbarMessage}}
-            <v-spacer></v-spacer>
-            <v-btn icon @click="snackbarShow=false">
-                <v-icon>mdi-close</v-icon>
-            </v-btn>
-        </v-snackbar>
     </v-app>
 </template>
 
@@ -64,7 +57,6 @@ import ExportReport from "@/components/ExportReport";
 import ValidateReport from "@/components/ValidateReport";
 import UpdatePrimaryKeyReport from "@/components/UpdatePrimaryKeyReport";
 import axios from "axios";
-import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "App",
@@ -88,27 +80,10 @@ export default {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: {},
-            snackbarShow: false
         };
     },
     created: function() {
         this.readAccessToken();
-
-        EventBus.$on("snackbar-update", response => {
-            this.showSnackbarMessage(response);
-        });
-    },
-
-    computed: {
-        responseSuccessful() {
-            return this.response.status > 199 && this.response.status < 300;
-        },
-        snackbarColor() {
-            return this.responseSuccessful ? "green" : "red";
-        },
-        snackbarMessage() {
-            return this.responseSuccessful ? "Success!" : this.response;
-        }
     },
 
     methods: {
@@ -123,13 +98,7 @@ export default {
                 window.location = axios.defaults.baseURL + "auth/login";
             }
         },
-        showSnackbarMessage(response) {
-            this.response = response;
-            this.snackbarShow = true;
-        },
         showValidateReport(responseData, workflowFailureMsg) {
-            console.log(responseData);
-            console.log(workflowFailureMsg);
             this.exportReport = null;
             this.validateReport = workflowFailureMsg;
             this.updatePrimaryKeyReport = null;

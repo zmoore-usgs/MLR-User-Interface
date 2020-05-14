@@ -65,7 +65,6 @@
 <script>
 import _ from "lodash";
 import LegacyLocationApi from "@/services/api/LegacyLocationApi.js";
-import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "UpdatePrimaryKeyCard",
@@ -95,7 +94,6 @@ export default {
                 })
                 .catch(error => {
                     this.handleWorkflowError(error.response);
-                    console.log(error);
                 });
         },
         parseMessage(message){

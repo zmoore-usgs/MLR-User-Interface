@@ -16,7 +16,6 @@
 
 <script>
 import DdotApi from "@/services/api/DdotApi.js";
-import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "DdotProcessCard",
