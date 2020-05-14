@@ -51,7 +51,6 @@ export default {
                 })
                 .catch(error => {
                     this.handleExportWorkflowError(error.response)
-                    console.log(error);
                 });
         },
         handleExportWorkflowError(response) {
