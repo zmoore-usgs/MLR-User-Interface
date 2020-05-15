@@ -5,11 +5,11 @@
         <v-content>
             <v-row>
                 <v-col>
-                    <DdotProcessCard @validate-workflow="showValidateReport" />
+                    <DdotProcessCard @validateWorkflow="showValidateReport" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <CopyLocationCard @export-workflow="showExportReport" />
+                    <CopyLocationCard @exportWorkflow="showExportReport" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
@@ -30,11 +30,11 @@
                 <v-data-table :headers="headers" :items="auditTable" :search="search"></v-data-table>
             </v-card>
             <v-card v-if="responseData">
-                <v-list>
+                <v-list dense>
                     <v-list-item>MLR Workflow: {{responseData.name}}</v-list-item>
                     <v-list-item>User: {{responseData.userName}}</v-list-item>
                     <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
-                    <v-list-item>Input File: {{responseData.inputFileName}}</v-list-item>
+                    <v-list-item>Input File: {{handleNullAttributes(responseData.inputFileName)}}</v-list-item>
                     <v-list-item>
                         <ExportReport v-if="exportReport" :report="exportReport" />
                     </v-list-item>
@@ -177,6 +177,11 @@ export default {
             document.body.appendChild(downloadAnchorNode); // required for firefox
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
+        },
+        handleNullAttributes(attr){
+            if (attr == null){
+                return "null";
+            }
         }
     }
 };
