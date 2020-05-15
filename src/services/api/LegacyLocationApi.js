@@ -14,7 +14,7 @@ export default {
 			})
 	},
 
-	postChange(oldAgencyCode, oldSiteNumber, newAgencyCode, newSiteNumber, reasonText) {
+	async postChange(oldAgencyCode, oldSiteNumber, newAgencyCode, newSiteNumber, reasonText) {
 
 		//Build URL
 		var url = "/workflows/primaryKey/update?oldAgencyCode=" + oldAgencyCode 

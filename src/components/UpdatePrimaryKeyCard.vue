@@ -71,7 +71,6 @@ export default {
 
     data() {
         return {
-            validForm: true,
             oldAgencyCode: "",
             oldSiteNumber: "",
             newAgencyCode: "",
