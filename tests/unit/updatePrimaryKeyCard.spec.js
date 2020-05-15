@@ -7,13 +7,13 @@ Vue.use(Vuetify);
 
 // Mocks
 // See - https://medium.com/trabe/mocking-different-values-for-the-same-module-using-jest-a7b8d358d78b
-import { validateDdot } from "@/services/api/DdotApi";
-jest.mock('@/services/api/DdotApi', () => ({
-    validateDdot: jest.fn()
+import { postChange } from "@/services/api/LegacyLocationApi";
+jest.mock('@/services/api/LegacyLocationApi', () => ({
+    postChange: jest.fn()
 }))
 
 // Components
-import DdotProcessCard from '@/components/DdotProcessCard.vue'
+import UpdatePrimaryKeyCard from '@/components/UpdatePrimaryKeyCard.vue'
 
 // Utilities
 import {
@@ -21,112 +21,60 @@ import {
     createLocalVue
 } from '@vue/test-utils'
 
-describe('DdotProcessCard.vue', () => {
+describe('UpdatePrimaryKeyCard.vue', () => {
     let localVue;
     let vuetify;
     
     const mountFactory = function(args) {
-        return mount(DdotProcessCard, {
+        return mount(UpdatePrimaryKeyCard, {
             localVue,
             vuetify,
             ...args
         });
     }
 
-    const fileContents       = 'file contents';
-    const dDotFile = new Blob([fileContents], {type : 'text/plain'});
-
-    const validateSuccessWarningResponse = {
+    const stationChangeSuccessResponse = {
         data: {
-            name: "Validate D dot File",
-            inputFileName: "d.cabuchwa_good.011",
-            reportDateTime: "2020-05-08T16:28:11.485Z",
-            userName: "mlradmin",
-            workflowSteps: [],
-            sites: [
-                {
-                    agencyCode: "USGS ",
-                    siteNumber: "432506088151701",
-                    transactionType: "A",
-                    success: true,
-                    steps: [
-                        {
-                            name: "Validate",
-                            httpStatus: 200,
-                            success: true,
-                            details: "{\"validator_message\": {\"warning_message\": {\"latitude\": [\"Latitude is out of range for county 067\"], \"longitude\": [\"Longitude is out of range for county 067\"]}}\n}"
-                        }
-                    ]
-                },
-                {
-                    agencyCode: "USGS ",
-                    siteNumber: "432452088151501",
-                    transactionType: "A",
-                    success: true,
-                    steps: [
-                        {
-                            name: "Validate",
-                            httpStatus: 200,
-                            success: true,
-                            details: "{\"validator_message\": {\"warning_message\": {\"latitude\": [\"Latitude is out of range for county 067\"], \"longitude\": [\"Longitude is out of range for county 067\"]}}\n}"
-                        }
-                    ]
-                }
-            ],
-            numberSiteSuccess: 2,
-            numberSiteFailure: 0
-        }
-    };
-
-    const validateSuccessResponse = {
-        data: {
-            name: "Validate D dot File",
-            inputFileName: "d.cabuchwa_good.011",
-            reportDateTime: "2020-05-08T17:40:54.241Z",
-            userName: "mlradmin",
-            workflowSteps: [],
-            sites: [],
-            numberSiteSuccess: 2,
-            numberSiteFailure: 0
+            "name": "Site Agency Code and/or Site Number Update Workflow",
+            "reportDateTime": "2020-05-14T14:51:15.110Z",
+            "userName": "mlradmin",
+            "workflowSteps": [],
+            "sites": [],
+            "numberSiteSuccess": 1,
+            "numberSiteFailure": 0
         }
     }
 
-    const validateErrorNotFoundResponse = {
-        data: {name: "Validate D dot File",
-            inputFileName: "d.cabuchwaBadNotFound.011",
-            reportDateTime: "2020-05-08T18:00:06.254Z",
-            userName: "mlradmin",
-            workflowSteps: [],
-            sites: [
+    const stationChangeErrorNotFoundResponse = {
+        data: {
+            "name": "Site Agency Code and/or Site Number Update Workflow",
+            "reportDateTime": "2020-05-14T15:14:52.022Z",
+            "userName": "mlradmin",
+            "workflowSteps": [],
+            "sites": [
                 {
-                    agencyCode: "USGS ",
-                    siteNumber: "432506088151701",
-                    transactionType: "M",
-                    success: false,
-                    steps: [
+                    "agencyCode": "USGS",
+                    "siteNumber": "234",
+                    "transactionType": "M",
+                    "success": false,
+                    "steps": [
                         {
-                            name: "Location Get by AgencyCode and SiteNumber",
-                            httpStatus: 404,
-                            success: false,
-                            details: "{\"error_message\": \"Requested Location Not Found\"}"
+                            "name": "Location Get by AgencyCode and SiteNumber",
+                            "httpStatus": 404,
+                            "success": false,
+                            "details": "{\"error_message\": \"Requested Location Not Found\"}"
                         },
                         {
-                            name: "Validate",
-                            httpStatus: 404,
-                            success: false,
-                            details: "{\"error_message\": \"Requested Location Not Found\"}"
-                        },
-                        {
-                            name: "Validate Single D dot Transaction",
-                            httpStatus: 404,
-                            success: false,
-                            details: "{\"error_message\":\"Transaction validation failed.\"}"
+                            "name": "Update Agency Code and/or Site Number",
+                            "httpStatus": 404,
+                            "success": false,
+                            "details": "{\"error_message\": \"Requested Location Not Found\"}"
                         }
                     ]
                 }
             ],
-            numberSiteSuccess: 0,
-            numberSiteFailure: 1
+            "numberSiteSuccess": 0,
+            "numberSiteFailure": 1
         }
     }
 
@@ -263,61 +211,24 @@ describe('DdotProcessCard.vue', () => {
         }
     }
 
-    const validateInternalServerErrorResponse = {
-        data: {
-            error_message: "Something bad happened. Contact us with Reference Number: 341013512"
-        }
-    }
 
-    const validateSuccessWarningParsed = {
-        siteErrors: {
-            errors: [
-                {
-                    message: "Validate Warning: latitude - Latitude is out of range for county 067",
-                    name: "USGS-432506088151701"
-                },
-                {
-                    message: "Validate Warning: longitude - Longitude is out of range for county 067",
-                    name: "USGS-432506088151701"
-                },
-                {
-                    message: "Validate Warning: latitude - Latitude is out of range for county 067",
-                    name: "USGS-432452088151501"
-                },
-                {
-                    message: "Validate Warning: longitude - Longitude is out of range for county 067",
-                    name: "USGS-432452088151501"
-                }
-            ],
-            name: "Site-level Errors and Warnings"
-        },
+    const stationChangeSuccessParsed = {
         workflowStatus: {
-            message: "2 Transactions Succeeded, 0 Transactions Failed",
+            message: "1 Transactions Succeeded, 0 Transactions Failed",
             name: "Status"
         }
     }
 
-    const validateSuccessParsed = {
-        workflowStatus: {
-            message: "2 Transactions Succeeded, 0 Transactions Failed",
-            name: "Status"
-        }
-    }
-
-    const validateErrorNotFoundParsed = {
+    const stationChangeErrorNotFoundParsed = {
             siteErrors: {
                 errors: [
                     {
                         message: "Location Get by AgencyCode and SiteNumber Fatal Error: Requested Location Not Found",
-                        name: "USGS-432506088151701"
+                        name: "USGS-234"
                     },
                     {
-                        message: "Validate Fatal Error: Requested Location Not Found",
-                        name: "USGS-432506088151701"
-                    },
-                    {
-                        message: "Validate Single D dot Transaction Fatal Error: Transaction validation failed.",
-                        name: "USGS-432506088151701"
+                        message: "Update Agency Code and/or Site Number Fatal Error: Requested Location Not Found",
+                        name: "USGS-234"
                     }
                 ],
                 name: "Site-level Errors and Warnings"
@@ -412,22 +323,6 @@ describe('DdotProcessCard.vue', () => {
         }
     }
 
-    const validateInternalServerErrorParsed = {
-        workflowLevelErrors: {
-            errors: [
-                {
-                    message: "Something bad happened. Contact us with Reference Number: 341013512",
-                    name: "Internal Server Error"
-                }
-            ],
-            name: "Workflow-level Errors"
-        },
-        workflowStatus: {
-            message: "No sites processed",
-            name: "Status"
-        }
-    }
-
     beforeEach(() => {
         localVue = createLocalVue();
         vuetify = new Vuetify();
@@ -438,77 +333,47 @@ describe('DdotProcessCard.vue', () => {
     it('Renders the input fields and button', () => {
         const wrapper = mountFactory({});
 
-        expect(wrapper.html()).toContain('Select Ddot File to Upload</label>');
+        expect(wrapper.html()).toContain('>Agency Code</label>');
+        expect(wrapper.html()).toContain('>New Agency Code</label>');
+        expect(wrapper.html()).toContain('>Site Number</label>');
+        expect(wrapper.html()).toContain('>New Site Number</label>');
         expect(wrapper.html()).toContain('v-text-field');
         expect(wrapper.html()).toContain('v-btn');
     });
 
-    it('Emits proper response for success with warnings', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateSuccessWarningResponse
-        ));
-        const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
-        
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
-
-        await Vue.nextTick();
-
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateSuccessWarningResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateSuccessWarningParsed);
-    });
-
     it('Emits proper response for success', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateSuccessResponse
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeSuccessResponse
         ));
         const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
         
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
+        wrapper.find('button').trigger('click');
 
         await Vue.nextTick();
 
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateSuccessResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateSuccessParsed);
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeSuccessResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeSuccessParsed);
     });
 
     it('Emits proper response for failure due to location not found', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateErrorNotFoundResponse
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeErrorNotFoundResponse
         ));
         const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
         
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
+        wrapper.find('button').trigger('click');
 
         await Vue.nextTick();
 
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateErrorNotFoundResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateErrorNotFoundParsed);
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeErrorNotFoundResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeErrorNotFoundParsed);
     });
 
+    /*
     it('Emits proper response for validation fatal error', async () => {
         validateDdot.mockImplementation(() => Promise.resolve(
             validateFatalErrorResponse
@@ -596,27 +461,5 @@ describe('DdotProcessCard.vue', () => {
         expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateDuplicateStationErrorResponse.data);
         expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateDuplicateStationErrorParsed);
     });
-
-    it('Emits proper response for internal server error', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateInternalServerErrorResponse
-        ));
-        const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
-        
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
-
-        await Vue.nextTick();
-
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateInternalServerErrorResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateInternalServerErrorParsed);
-    });
-    
+   */ 
 });
