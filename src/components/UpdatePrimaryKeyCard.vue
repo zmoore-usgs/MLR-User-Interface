@@ -105,52 +105,67 @@ export default {
         handleWorkflowError(response) {
             var workflowFailureMsg = {};
             var workflowErrors = null;
-            if (response.data.workflowSteps.length > 0) {
-                var workflowFailure = response.data.workflowSteps.filter(
-                    function(x) {
-                        return x.name.search("Workflow") > 0;
+            if (response.data.name === undefined){
+                workflowFailureMsg.workflowStatus = {
+                        name: "Status",
+                        message:"No sites processed"
+                    };
+                workflowFailureMsg.workflowLevelErrors = {
+                        name: "Workflow-level Errors",
+                        errors: []
+                    };
+                workflowFailureMsg.workflowLevelErrors.errors.push({
+                    name: "Internal Server Error",
+                    message: response.data.error_message
+                });
+            } else {
+                if (response.data.workflowSteps.length > 0) {
+                    var workflowFailure = response.data.workflowSteps.filter(
+                        function(x) {
+                            return x.name.search("Workflow") > 0;
+                        }
+                    );
+                    if (workflowFailure.length > 0) {
+                        workflowFailureMsg.workflowStatus = {
+                            name: workflowFailure[0].name,
+                            message:
+                                this.parseMessage(workflowFailure[0].details)
+                        };
                     }
-                );
-                if (workflowFailure.length > 0) {
+                    workflowErrors = response.data.workflowSteps.filter(function(
+                        x
+                    ) {
+                        return x.name.search("Workflow") < 0;
+                    });
+                }
+                if (workflowFailureMsg.workflowStatus === undefined) {
                     workflowFailureMsg.workflowStatus = {
-                        name: workflowFailure[0].name,
+                        name: "Status",
                         message:
-                            this.parseMessage(workflowFailure[0].details)
+                            response.data.numberSiteSuccess +
+                            " Transactions Succeeded, " +
+                            response.data.numberSiteFailure +
+                            " Transactions Failed"
                     };
                 }
-                workflowErrors = response.data.workflowSteps.filter(function(
-                    x
-                ) {
-                    return x.name.search("Workflow") < 0;
-                });
-            }
-            if (workflowFailureMsg.workflowStatus === undefined) {
-                workflowFailureMsg.workflowStatus = {
-                    name: "Status",
-                    message:
-                        response.data.numberSiteSuccess +
-                        " Transactions Succeeded, " +
-                        response.data.numberSiteFailure +
-                        " Transactions Failed"
-                };
-            }
-            if (workflowErrors != null) {
-                workflowFailureMsg.workflowLevelErrors = {
-                    name: "Workflow-level Errors",
-                    errors: []
-                };
-                workflowErrors.forEach(function(e) {
-                    workflowFailureMsg.workflowLevelErrors.errors.push({
-                        name: e.name,
-                        message: JSON.parse(e.details).error_message
+                if (workflowErrors != null) {
+                    workflowFailureMsg.workflowLevelErrors = {
+                        name: "Workflow-level Errors",
+                        errors: []
+                    };
+                    workflowErrors.forEach(function(e) {
+                        workflowFailureMsg.workflowLevelErrors.errors.push({
+                            name: e.name,
+                            message: JSON.parse(e.details).error_message
+                        });
                     });
-                });
-            }
-            if (response.data.sites.length > 0) {
-                workflowFailureMsg.siteErrors = {
-                    name: "Site-level Errors and Warnings",
-                    errors: this.parseSiteErrorRows(response.data.sites)
-                };
+                }
+                if (response.data.sites.length > 0) {
+                    workflowFailureMsg.siteErrors = {
+                        name: "Site-level Errors and Warnings",
+                        errors: this.parseSiteErrorRows(response.data.sites)
+                    };
+                }
             }
             this.$emit("changeWorkflow", response.data, workflowFailureMsg);
         },

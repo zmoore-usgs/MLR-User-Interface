@@ -78,27 +78,27 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         }
     }
 
-    const validateFatalErrorResponse = {
-        data: {name: "Validate D dot File",
-            inputFileName: "d.cabuchwaBadFatalValidation.011",
-            reportDateTime: "2020-05-08T18:22:00.455Z",
+    const stationChangeFatalErrorResponse = {
+        data: {
+            name: "Site Agency Code and/or Site Number Update Workflow",
+            reportDateTime: "2020-05-15T12:08:31.494Z",
             userName: "mlradmin",
             workflowSteps: [],
             sites: [
                 {
-                    agencyCode: "USGS ",
-                    siteNumber: "432356088153001",
-                    transactionType: "A",
+                    agencyCode: "BLAH",
+                    siteNumber: "040851375",
+                    transactionType: "M",
                     success: false,
                     steps: [
                         {
                             name: "Validate",
                             httpStatus: 400,
                             success: false,
-                            details: "{\"validator_message\": {\"fatal_error_message\": {\"latitude\": [\"Latitude is out of range for state 54\"], \"longitude\": [\"Longitude is out of range for state 54\"]}}\n}"
+                            details: "{\"validator_message\": {\"fatal_error_message\": {\"agencyCode\": [\" 'BLAH' is not in reference list\"]}}\n}"
                         },
                         {
-                            name: "Validate Single D dot Transaction",
+                            name: "Update Agency Code and/or Site Number",
                             httpStatus: 400,
                             success: false,
                             details: "{\"error_message\":\"Transaction validation failed.\"}"
@@ -106,111 +106,128 @@ describe('UpdatePrimaryKeyCard.vue', () => {
                     ]
                 }
             ],
-            numberSiteSuccess: 0,
+            numberSiteSuccess: 1,
             numberSiteFailure: 1
         }
     }
 
-    const validateWorkflowLevelErrorsResponse = {
-        data: {
-            name: "Validate D dot File",
-            inputFileName: "d.cabuchwa_good.011",
-            reportDateTime: "2020-05-08T19:11:50.488Z",
-            userName: "mlradmin",
-            workflowSteps: [
-                {
-                    name: "Ingest D dot File",
-                    httpStatus: 500,
-                    success: false,
-                    details: "{\"error_message\":\"DdotClient#ingestDdot(MultipartFile) failed and no fallback available.\"}"
-                },
-                {
-                    name: "Validate D dot File workflow failed",
-                    httpStatus: 500,
-                    success: false,
-                    details: "{\"error_message\": \"Unable to read ingestor output.\"}"
-                }
-            ],
-            sites: [],
-            numberSiteSuccess: 0,
-            numberSiteFailure: 0
-        }
+    const stationChangeNoCruServiceErrorResponse = {
+       data: {
+        name: "Site Agency Code and/or Site Number Update Workflow",
+        reportDateTime: "2020-05-15T12:28:01.319Z",
+        userName: "mlradmin",
+        workflowSteps: [],
+        sites: [
+          {
+            agencyCode: "USGS",
+            siteNumber: "534534",
+            transactionType: "M",
+            success: false,
+            steps: [
+              {
+                name: "Update Agency Code and/or Site Number",
+                httpStatus: 500,
+                success: false,
+                details: "{\"error_message\": \"LegacyCruClient#getMonitoringLocation(String,String) failed and no fallback available.\"}"
+              }
+            ]
+          }
+        ],
+        numberSiteSuccess: 0,
+        numberSiteFailure: 1
+      }
     }
 
-    const validateNoCruServiceErrorResponse = {
-       data: {
-            name: "Validate D dot File",
-            inputFileName: "d.cabuchwa.011",
-            reportDateTime: "2020-05-11T12:34:09.485Z",
+    const stationChangeNoExportServiceErrorResponse = {
+        data: {
+            name: "Site Agency Code and/or Site Number Update Workflow",
+            reportDateTime: "2020-05-15T12:50:55.369Z",
+            userName: "mlradmin",
+            workflowSteps: [],
+            sites: [
+              {
+                agencyCode: "USGS",
+                siteNumber: "040851373",
+                transactionType: "M",
+                success: false,
+                steps: [
+                  {
+                    name: "Export Change Transaction File",
+                    httpStatus: 500,
+                    success: false,
+                    details: "{\"error_message\":\"FileExportClient#exportChange(String) failed and no fallback available..  This error requires manual intervention to resolve. Please contact the support team for assistance.\"}"
+                  },
+                  {
+                    name: "Update Agency Code and/or Site Number",
+                    httpStatus: 500,
+                    success: false,
+                    details: "{\"error_message\":\"FileExportClient#exportChange(String) failed and no fallback available.. This error requires manual intervention to resolve. Please contact the support team for assistance.\"}"
+                  }
+                ]
+              }
+            ],
+            numberSiteSuccess: 1,
+            numberSiteFailure: 1
+          }
+        }
+    
+    const stationChangeNoNotificationServiceErrorResponse = {
+        data: {
+            name: "Site Agency Code and/or Site Number Update Workflow",
+            reportDateTime: "2020-05-15T13:06:14.307Z",
+            userName: "mlradmin",
+            workflowSteps: [
+              {
+                name: "Notification",
+                httpStatus: 500,
+                success: false,
+                details: "{\"error_message\": \"Notification failed to send.\"}"
+              }
+            ],
+            sites: [],
+            numberSiteSuccess: 2,
+            numberSiteFailure: 0
+          }
+    }
+
+    const stationChangeDuplicateStationErrorResponse = {
+        data: {
+            name: "Site Agency Code and/or Site Number Update Workflow",
+            reportDateTime: "2020-05-15T13:51:13.716Z",
             userName: "mlradmin",
             workflowSteps: [],
             sites: [
                 {
-                    agencyCode: "USGS ",
-                    siteNumber: "432506088151701",
+                    agencyCode: "USGS",
+                    siteNumber: "04087098",
                     transactionType: "M",
                     success: false,
                     steps: [
                         {
                             name: "Validate Duplicate Monitoring Location Name",
-                            httpStatus: 500,
+                            httpStatus: 400,
                             success: false,
-                            details: "LegacyCruClient#validateMonitoringLocation(String) failed and no fallback available."
+                            details: "{\"error_message\": \"{\\\"validation_errors\\\":{\\\"duplicate_site\\\":\\\"Duplicate Agency Code and Site Number found in MLR.\\\"}}\"}"
                         },
                         {
-                            name: "Validate",
-                            httpStatus: 500,
-                            success: false,
-                            details: "{\"error_message\":\"LegacyCruClient#getMonitoringLocation(String,String) failed and no fallback available.\"}"
-                        },
-                        {
-                            name: "Validate Single D dot Transaction",
-                            httpStatus: 500,
+                            name: "Update Agency Code and/or Site Number",
+                            httpStatus: 400,
                             success: false,
                             details: "{\"error_message\":\"Transaction validation failed.\"}"
                         }
                     ]
                 }
             ],
-            numberSiteSuccess: 0,
+            numberSiteSuccess: 1,
             numberSiteFailure: 1
         }
     }
 
-    const validateDuplicateStationErrorResponse = {
+    const stationChangeInternalServerErrorResponse = {
         data: {
-            name: "Validate and Process D dot File Workflow",
-            inputFileName: "d.cabuchwa_good.011",
-            reportDateTime: "2020-05-11T18:20:14.707Z",
-            userName: "mlradmin",
-            workflowSteps: [],
-            sites: [
-                {
-                    agencyCode: "USGS ",
-                    siteNumber: "432506088151701",
-                    transactionType: "A",
-                    success: false,
-                    steps: [
-                        {
-                            name: "Validate Duplicate Monitoring Location Name",
-                            httpStatus: 400,
-                            success: false,
-                            details: "{\"error_message\": \"{\\\"validation_errors\\\":{\\\"stationIx\\\":\\\"Duplicate normalized station name locations found for 'GILBERTLAKESPRING3NRWESTBENDWI': USGS-432506088151701, stateFipsCode: 55\\\",\\\"duplicate_site\\\":\\\"Duplicate Agency Code and Site Number found in MLR.\\\"}}\"}"
-                        },
-                        {
-                            name: "Validate Single D dot Transaction",
-                            httpStatus: 400,
-                            success: false,
-                            details: "{\"error_message\":\"Transaction validation failed.\"}"
-                        }
-                    ]
-                }
-            ],
-            numberSiteSuccess: 0,
-            numberSiteFailure: 1
+            error_message: "Something bad happened. Contact us with Reference Number: 341013512"
         }
     }
-
 
     const stationChangeSuccessParsed = {
         workflowStatus: {
@@ -239,56 +256,32 @@ describe('UpdatePrimaryKeyCard.vue', () => {
             }
     }
 
-    const validateFatalErrorParsed = {
+    const stationChangeFatalErrorParsed = {
             siteErrors: {
                 errors: [
                     {
-                        message: "Validate Fatal Error: latitude - Latitude is out of range for state 54",
-                        name: "USGS-432356088153001"
+                        message: "Validate Fatal Error: agencyCode -  'BLAH' is not in reference list",
+                        name: "BLAH-040851375"
                     },
                     {
-                        message: "Validate Fatal Error: longitude - Longitude is out of range for state 54",
-                        name: "USGS-432356088153001"
-                    },
-                    {
-                        message: "Validate Single D dot Transaction Fatal Error: Transaction validation failed.",
-                        name: "USGS-432356088153001"
+                        message: "Update Agency Code and/or Site Number Fatal Error: Transaction validation failed.",
+                        name: "BLAH-040851375"
                     }
                 ],
                 name: "Site-level Errors and Warnings"
             },
             workflowStatus: {
-                message: "0 Transactions Succeeded, 1 Transactions Failed",
+                message: "1 Transactions Succeeded, 1 Transactions Failed",
                 name: "Status"
             }
     }
 
-    const validateWorkflowLevelErrorsParsed = {
-        workflowLevelErrors: {
-            errors: [
-                {
-                    message: "DdotClient#ingestDdot(MultipartFile) failed and no fallback available.",
-                    name: "Ingest D dot File"
-                }
-            ],
-            name: "Workflow-level Errors"
-        },
-        workflowStatus: {
-            message: " (Unable to read ingestor output.) : No Transactions were processed. Error details listed below: ",
-            name: "Validate D dot File workflow failed"
-        }
-    }
-
-    const validateNoCruServiceErrorParsed = {
+    const stationChangeNoCruServiceErrorParsed = {
         siteErrors: {
             errors: [
                 {
-                    message: "Validate Fatal Error: LegacyCruClient#getMonitoringLocation(String,String) failed and no fallback available.",
-                    name: "USGS-432506088151701"
-                },
-                {
-                    message: "Validate Single D dot Transaction Fatal Error: Transaction validation failed.",
-                    name: "USGS-432506088151701"
+                    message: "Update Agency Code and/or Site Number Fatal Error: LegacyCruClient#getMonitoringLocation(String,String) failed and no fallback available.",
+                    name: "USGS-534534"
                 }
             ],
             name: "Site-level Errors and Warnings"
@@ -299,26 +292,74 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         }
     }
 
-    const validateDuplicateStationErrorParsed = {
+    const stationChangeNoExportServiceErrorParsed = {
         siteErrors: {
             errors: [
                 {
-                    message: "Validate Duplicate Monitoring Location Name Fatal Error: stationIx - Duplicate normalized station name locations found for 'GILBERTLAKESPRING3NRWESTBENDWI': USGS-432506088151701, stateFipsCode: 55",
-                    name: "USGS-432506088151701"
+                    message: "Export Change Transaction File Fatal Error: FileExportClient#exportChange(String) failed and no fallback available..  This error requires manual intervention to resolve. Please contact the support team for assistance.",
+                    name: "USGS-040851373"
                 },
                 {
-                    message: "Validate Duplicate Monitoring Location Name Fatal Error: duplicate_site - Duplicate Agency Code and Site Number found in MLR.",
-                    name: "USGS-432506088151701"
-                },
-                {
-                    message: "Validate Single D dot Transaction Fatal Error: Transaction validation failed.",
-                    name: "USGS-432506088151701"
+                    message: "Update Agency Code and/or Site Number Fatal Error: FileExportClient#exportChange(String) failed and no fallback available.. This error requires manual intervention to resolve. Please contact the support team for assistance.",
+                    name: "USGS-040851373"
                 }
             ],
             name: "Site-level Errors and Warnings"
         },
         workflowStatus: {
-            message: "0 Transactions Succeeded, 1 Transactions Failed",
+            message: "1 Transactions Succeeded, 1 Transactions Failed",
+            name: "Status"
+        }
+    }
+
+    const stationChangeNoNotificationServiceErrorParsed = {
+        workflowLevelErrors: {
+            errors: [
+                {
+                    message: "Notification failed to send.",
+                    name: "Notification"
+                }
+            ],
+            name: "Workflow-level Errors"
+        },
+        workflowStatus: {
+            message: "2 Transactions Succeeded, 0 Transactions Failed",
+            name: "Status"
+        }
+    }
+
+    const stationChangeDuplicateStationErrorParsed = {
+        siteErrors: {
+            errors: [
+                {
+                    message: "Validate Duplicate Monitoring Location Name Fatal Error: duplicate_site - Duplicate Agency Code and Site Number found in MLR.",
+                    name: "USGS-04087098"
+                },
+                {
+                    message: "Update Agency Code and/or Site Number Fatal Error: Transaction validation failed.",
+                    name: "USGS-04087098"
+                }
+            ],
+            name: "Site-level Errors and Warnings"
+        },
+        workflowStatus: {
+            message: "1 Transactions Succeeded, 1 Transactions Failed",
+            name: "Status"
+        }
+    }
+
+    const stationChangeInternalServerErrorParsed = {
+        workflowLevelErrors: {
+            errors: [
+                {
+                    message: "Something bad happened. Contact us with Reference Number: 341013512",
+                    name: "Internal Server Error"
+                }
+            ],
+            name: "Workflow-level Errors"
+        },
+        workflowStatus: {
+            message: "No sites processed",
             name: "Status"
         }
     }
@@ -373,93 +414,100 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeErrorNotFoundParsed);
     });
 
-    /*
     it('Emits proper response for validation fatal error', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateFatalErrorResponse
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeFatalErrorResponse
         ));
         const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
         
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
+        wrapper.find('button').trigger('click');
 
         await Vue.nextTick();
 
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateFatalErrorResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateFatalErrorParsed);
-    });
-
-    it('Emits proper response for validation workflow-level errors', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateWorkflowLevelErrorsResponse
-        ));
-        const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
-        
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
-
-        await Vue.nextTick();
-
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateWorkflowLevelErrorsResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateWorkflowLevelErrorsParsed);
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeFatalErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeFatalErrorParsed);
     });
 
     it('Emits proper response for validation no CRU Service available errors', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateNoCruServiceErrorResponse
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeNoCruServiceErrorResponse
         ));
         const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
         
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
+        wrapper.find('button').trigger('click');
 
         await Vue.nextTick();
 
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateNoCruServiceErrorResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateNoCruServiceErrorParsed);
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeNoCruServiceErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoCruServiceErrorParsed);
+    });
+
+    it('Emits proper response for validation no Export Service available errors', async () => {
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeNoExportServiceErrorResponse
+        ));
+        const wrapper = mountFactory({});
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
+        
+        wrapper.find('button').trigger('click');
+
+        await Vue.nextTick();
+
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeNoExportServiceErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoExportServiceErrorParsed);
+    });
+
+    it('Emits proper response for validation no Notification Service available errors', async () => {
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeNoNotificationServiceErrorResponse
+        ));
+        const wrapper = mountFactory({});
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
+        
+        wrapper.find('button').trigger('click');
+
+        await Vue.nextTick();
+
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeNoNotificationServiceErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoNotificationServiceErrorParsed);
     });
 
     it('Emits proper response for validation duplicate station errors', async () => {
-        validateDdot.mockImplementation(() => Promise.resolve(
-            validateDuplicateStationErrorResponse
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeDuplicateStationErrorResponse
         ));
         const wrapper = mountFactory({});
-        expect(wrapper.emitted().validateWorkflow).toBeUndefined();
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
         
-        wrapper.setData({
-            ddotFile: dDotFile,
-            districtCodes: null,
-            transactionTypes: null
-        });
-        
-        wrapper.find('button.validate').trigger('click');
+        wrapper.find('button').trigger('click');
 
         await Vue.nextTick();
 
-        expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateDuplicateStationErrorResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateDuplicateStationErrorParsed);
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeDuplicateStationErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeDuplicateStationErrorParsed);
     });
-   */ 
+
+    it('Emits proper response for internal server error', async () => {
+        postChange.mockImplementation(() => Promise.resolve(
+            stationChangeInternalServerErrorResponse
+        ));
+        const wrapper = mountFactory({});
+        expect(wrapper.emitted().changeWorkflow).toBeUndefined();
+        
+        wrapper.find('button').trigger('click');
+
+        await Vue.nextTick();
+
+        expect(wrapper.emitted().changeWorkflow).toBeTruthy();
+        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeInternalServerErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeInternalServerErrorParsed);
+    });
+
 });
