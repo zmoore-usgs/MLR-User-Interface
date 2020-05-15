@@ -24,6 +24,10 @@ import {
 describe('UpdatePrimaryKeyCard.vue', () => {
     let localVue;
     let vuetify;
+
+    const app = document.createElement ("div");
+    app.setAttribute ("data-app", true);
+    document.body.append (app);
     
     const mountFactory = function(args) {
         return mount(UpdatePrimaryKeyCard, {

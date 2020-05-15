@@ -59,6 +59,20 @@
                 <span>Enter the old agency code and site number and the new agency code and site number, and the reason for an existing site that you'd like to update the primary key for.</span>
             </v-tooltip>
         </v-card-actions>
+        <v-dialog 
+            hide-overlay width="300"
+            v-model="loading" 
+            >
+            <v-card>
+                <v-card-text>
+                    Processing your request
+                    <v-progress-linear 
+                        indeterminate 
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </v-card>
 </template>
 
@@ -82,16 +96,20 @@ export default {
             validReasonText: [
                 text => !!text || 'Item is required',
                 text => text && /^[0-9a-zA-Z ]+$/.test(text) || 'Reason text must contain only letters, numbers and spaces.'
-            ]
+            ],
+            loading: false
         };
     },
     methods: {
         updatePrimaryKey() {
+            this.loading = true;
             LegacyLocationApi.postChange(this.oldAgencyCode, this.oldSiteNumber, this.newAgencyCode, this.newSiteNumber, this.reasonText)
                 .then(response => {
+                    this.loading = false;
                     this.handleWorkflowError(response);
                 })
                 .catch(error => {
+                    this.loading = false;
                     this.handleWorkflowError(error.response);
                 });
         },

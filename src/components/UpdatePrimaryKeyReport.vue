@@ -1,7 +1,5 @@
 <template>
     <v-container>
-        <span v-if="report.numberSiteSuccess == 1">Station Change Successful</span>
-        <span v-if="report.numberSiteSuccess == 0">Station Change Errors:</span>
         <div>
         <p v-if="report.workflowStatus">{{report.workflowStatus.name}}: {{report.workflowStatus.message}}</p>
 

@@ -1,17 +1,31 @@
 <template>
-    <v-card flat>
-        <v-card-title>Upload and Process a Ddot file</v-card-title>
-        <v-card-subtitle>When creating or modifying sites outside your Center, please coordinate with the other Center's Local Data Manager to ensure continuity of ownership</v-card-subtitle>
-        <v-card-text>
-            <v-form>
-                <v-file-input v-model="ddotFile" label="Select Ddot File to Upload"></v-file-input>
-            </v-form>
-        </v-card-text>
-        <v-card-actions>
-            <v-btn class="mx-2 validate" color="primary" @click="validateButtonClicked">Validate</v-btn>
-            <v-btn class="upload" color="primary" @click="uploadButtonClicked">Validate and Update records</v-btn>
-        </v-card-actions>
-    </v-card>
+        <v-card flat>
+            <v-card-title>Upload and Process a Ddot file</v-card-title>
+            <v-card-subtitle>When creating or modifying sites outside your Center, please coordinate with the other Center's Local Data Manager to ensure continuity of ownership</v-card-subtitle>
+            <v-card-text>
+                <v-form>
+                    <v-file-input v-model="ddotFile" label="Select Ddot File to Upload"></v-file-input>
+                </v-form>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn class="mx-2 validate" color="primary" @click="validateButtonClicked">Validate</v-btn>
+                <v-btn class="upload" color="primary" @click="uploadButtonClicked">Validate and Update records</v-btn>
+            </v-card-actions>
+            <v-dialog 
+            hide-overlay width="300"
+            v-model="loading" 
+            >
+                <v-card>
+                    <v-card-text>
+                        Processing your request
+                        <v-progress-linear 
+                            indeterminate 
+                            class="mb-0"
+                        ></v-progress-linear>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+        </v-card>
 </template>
 
 <script>
@@ -24,7 +38,8 @@ export default {
         return {
             ddotFile: null,
             districtCodes: null,
-            transactionTypes: null
+            transactionTypes: null,
+            loading: false
         };
     },
     methods: {
@@ -35,20 +50,26 @@ export default {
             this.uploadDdotFile();
         },
         uploadDdotFile() {
+            this.loading = true;
             DdotApi.uploadDdot(this.ddotFile)
                 .then(response => {
+                    this.loading = false;
                     this.workflowErrors(response);
                 })
                 .catch(error => {
+                    this.loading = false;
                     this.workflowErrors(error.response);
                 });
         },
         validateDdotFile() {
+            this.loading = true;
             DdotApi.validateDdot(this.ddotFile)
                 .then(response => {
-                    this.workflowErrors(response);
+                    this.loading = false;
+                    this.workflowErrors(response); 
                 })
                 .catch(error => {
+                    this.loading = true;
                     this.workflowErrors(error.response);
                 });
         },

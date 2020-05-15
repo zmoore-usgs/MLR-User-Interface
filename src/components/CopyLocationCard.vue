@@ -24,6 +24,20 @@
                 <span>Enter an agency code and site number for an existing site that you'd like to copy. The site will be copied to all NWIS hosts as a result.</span>
             </v-tooltip>
         </v-card-actions>
+        <v-dialog 
+            hide-overlay width="300"
+            v-model="loading" 
+            >
+            <v-card>
+                <v-card-text>
+                    Processing your request
+                    <v-progress-linear 
+                        indeterminate 
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </v-card>
 </template>
 
@@ -41,15 +55,19 @@ export default {
             rules: {
                     required: value => !!value || 'Required'
             },
+            loading: false,
         }
     },
     methods: {
         exportLocation() {
+            this.loading = true;
             LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
                 .then(response => {
+                    this.loading = false;
                     this.handleExportWorkflowError(response);
                 })
                 .catch(error => {
+                    this.loading = false;
                     this.handleExportWorkflowError(error.response)
                 });
         },
