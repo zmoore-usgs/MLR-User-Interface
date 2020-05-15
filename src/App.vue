@@ -11,7 +11,24 @@
                 <v-col>
                     <CopyLocationCard @export-workflow="showExportReport" />
                 </v-col>
+                <v-divider vertical color="black"></v-divider>
+                <v-col>
+                    <v-card flat>
+                        <v-card-title>Audit Table</v-card-title>
+                        <v-card-text>
+                            <v-text-field v-model="startDate" label="From"></v-text-field>
+                            <v-text-field v-model="endDate" label="To"></v-text-field>
+                            <v-text-field v-model="districtCodes" label="District Codes"></v-text-field>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn color="primary" @click="getAuditTable">Go</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-col>
             </v-row>
+            <v-card>
+                <v-data-table :headers="headers" :items="auditTable" :search="search"></v-data-table>
+            </v-card>
             <v-card v-if="responseData">
                 <v-list>
                     <v-list-item>MLR Workflow: {{responseData.name}}</v-list-item>
@@ -56,6 +73,7 @@ import ExportReport from "@/components/ExportReport";
 import ValidateReport from "@/components/ValidateReport";
 import axios from "axios";
 import { EventBus } from "@/components/EventBus.js";
+import MonitoringLocationApi from "@/services/api/MonitoringLocationApi.js";
 
 export default {
     name: "App",
@@ -76,7 +94,20 @@ export default {
             responseData: null,
             validateReport: null,
             exportReport: {},
-            snackbarShow: false
+            snackbarShow: false,
+            startDate: "",
+            endDate: "",
+            districtCodes: [],
+            auditTable: [],
+            search: "",
+            headers: [
+                { text: "User", value: "user" },
+                { text: "Calories", value: "calories" },
+                { text: "Fat (g)", value: "fat" },
+                { text: "Carbs (g)", value: "carbs" },
+                { text: "Protein (g)", value: "protein" },
+                { text: "Iron (%)", value: "iron" }
+            ]
         };
     },
     created: function() {
@@ -100,6 +131,17 @@ export default {
     },
 
     methods: {
+        getAuditTable() {
+            MonitoringLocationApi.getByDatesAndOptionalDistrictCodes(
+                this.startDate,
+                this.endDate,
+                this.districtCodes
+            );
+            // .then(response => {
+            //     this.auditTable = response;
+            //     console.log(response);
+            // });
+        },
         readAccessToken() {
             var accessToken = new URL(location.href).searchParams.get(
                 "mlrAccessToken"
@@ -116,8 +158,6 @@ export default {
             this.snackbarShow = true;
         },
         showValidateReport(responseData, workflowFailureMsg) {
-            console.log(responseData);
-            console.log(workflowFailureMsg);
             this.exportReport = null;
             this.validateReport = workflowFailureMsg;
             this.responseData = responseData;
