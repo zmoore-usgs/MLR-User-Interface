@@ -13,21 +13,11 @@
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <v-card flat>
-                        <v-card-title>Audit Table</v-card-title>
-                        <v-card-text>
-                            <v-text-field v-model="startDate" label="From"></v-text-field>
-                            <v-text-field v-model="endDate" label="To"></v-text-field>
-                            <v-text-field v-model="districtCodes" label="District Codes"></v-text-field>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-btn color="primary" @click="getAuditTable">Go</v-btn>
-                        </v-card-actions>
-                    </v-card>
+                    <AuditTableRetrieverCard @auditTable="showAuditTable" />
                 </v-col>
             </v-row>
-            <v-card>
-                <v-data-table :headers="headers" :items="auditTable" :search="search"></v-data-table>
+            <v-card v-if="auditTable.length != 0">
+                <AuditTable v-if="auditTable" :tableData="auditTable" />
             </v-card>
             <v-card v-if="responseData">
                 <v-list dense>
@@ -53,13 +43,6 @@
         </v-content>
         <MLRFooter />
         <USGSFooter />
-        <v-snackbar v-model="snackbarShow" :color="snackbarColor">
-            {{snackbarMessage}}
-            <v-spacer></v-spacer>
-            <v-btn icon @click="snackbarShow=false">
-                <v-icon>mdi-close</v-icon>
-            </v-btn>
-        </v-snackbar>
     </v-app>
 </template>
 
@@ -71,9 +54,9 @@ import DdotProcessCard from "@/components/DdotProcessCard";
 import CopyLocationCard from "@/components/CopyLocationCard";
 import ExportReport from "@/components/ExportReport";
 import ValidateReport from "@/components/ValidateReport";
+import AuditTable from "@/components/AuditTable";
+import AuditTableRetrieverCard from "@/components/AuditTableRetrieverCard";
 import axios from "axios";
-import { EventBus } from "@/components/EventBus.js";
-import MonitoringLocationApi from "@/services/api/MonitoringLocationApi.js";
 
 export default {
     name: "App",
@@ -85,7 +68,9 @@ export default {
         DdotProcessCard,
         CopyLocationCard,
         ExportReport,
-        ValidateReport
+        ValidateReport,
+        AuditTable,
+        AuditTableRetrieverCard
     },
 
     data() {
@@ -94,54 +79,14 @@ export default {
             responseData: null,
             validateReport: null,
             exportReport: {},
-            snackbarShow: false,
-            startDate: "",
-            endDate: "",
-            districtCodes: [],
-            auditTable: [],
-            search: "",
-            headers: [
-                { text: "User", value: "user" },
-                { text: "Calories", value: "calories" },
-                { text: "Fat (g)", value: "fat" },
-                { text: "Carbs (g)", value: "carbs" },
-                { text: "Protein (g)", value: "protein" },
-                { text: "Iron (%)", value: "iron" }
-            ]
+            auditTable: []
         };
     },
     created: function() {
         this.readAccessToken();
-
-        EventBus.$on("snackbar-update", response => {
-            this.showSnackbarMessage(response);
-        });
-    },
-
-    computed: {
-        responseSuccessful() {
-            return this.response.status > 199 && this.response.status < 300;
-        },
-        snackbarColor() {
-            return this.responseSuccessful ? "green" : "red";
-        },
-        snackbarMessage() {
-            return this.responseSuccessful ? "Success!" : this.response;
-        }
     },
 
     methods: {
-        getAuditTable() {
-            MonitoringLocationApi.getByDatesAndOptionalDistrictCodes(
-                this.startDate,
-                this.endDate,
-                this.districtCodes
-            );
-            // .then(response => {
-            //     this.auditTable = response;
-            //     console.log(response);
-            // });
-        },
         readAccessToken() {
             var accessToken = new URL(location.href).searchParams.get(
                 "mlrAccessToken"
@@ -153,19 +98,23 @@ export default {
                 window.location = axios.defaults.baseURL + "auth/login";
             }
         },
-        showSnackbarMessage(response) {
-            this.response = response;
-            this.snackbarShow = true;
-        },
         showValidateReport(responseData, workflowFailureMsg) {
             this.exportReport = null;
             this.validateReport = workflowFailureMsg;
+            this.auditTable = [];
             this.responseData = responseData;
         },
         showExportReport(responseData, workflowFailureMsg) {
             this.exportReport = workflowFailureMsg;
             this.validateReport = null;
+            this.auditTable = [];
             this.responseData = responseData;
+        },
+        showAuditTable(auditTable) {
+            this.exportReport = null;
+            this.validateReport = null;
+            this.auditTable = auditTable;
+            this.responseData = null;
         },
         downloadStepReport() {
             var dataStr =
@@ -178,8 +127,8 @@ export default {
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
         },
-        handleNullAttributes(attr){
-            if (attr == null){
+        handleNullAttributes(attr) {
+            if (attr == null) {
                 return "null";
             }
         }

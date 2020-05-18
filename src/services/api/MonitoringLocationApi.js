@@ -8,7 +8,9 @@ export default {
 		axiosParams.append('agencyCode', agencyCode);
 		axiosParams.append('siteNumber', siteNumber);
 
-		return this.getMonitoringLocation(axiosParams);
+		return axios.get("monitoringLocations/loggedTransactions", {
+			params: axiosParams
+		})
 	},
 	getByDatesAndOptionalDistrictCodes(startDate, endDate, districtCodes) {
 
@@ -20,25 +22,8 @@ export default {
 			axiosParams.append('districtCodes', districtCodes);
 		}
 
-		return axios.get("monitoringLocations", {
+		return axios.get("monitoringLocations/loggedTransactions", {
 			params: axiosParams
 		})
-		// .then(response => {
-		// 	return response
-		// }).catch(error => {
-		// 	return error
-		// })
-
-		// return this.getMonitoringLocation(axiosParams);
-	},
-	getMonitoringLocation(axiosParams) {
-		return axios.get("monitoringLocations", {
-			params: axiosParams
-		})
-			.then(response => {
-				return response
-			}).catch(error => {
-				return error
-			})
 	}
 }
