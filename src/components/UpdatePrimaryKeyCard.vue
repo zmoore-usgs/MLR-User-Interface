@@ -105,12 +105,13 @@ export default {
             this.loading = true;
             LegacyLocationApi.postChange(this.oldAgencyCode, this.oldSiteNumber, this.newAgencyCode, this.newSiteNumber, this.reasonText)
                 .then(response => {
-                    this.loading = false;
                     this.handleWorkflowError(response);
                 })
                 .catch(error => {
-                    this.loading = false;
                     this.handleWorkflowError(error.response);
+                })
+                .finally(() => {
+                        this.loading = false;
                 });
         },
         parseMessage(message){

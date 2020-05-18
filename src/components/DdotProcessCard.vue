@@ -53,25 +53,28 @@ export default {
             this.loading = true;
             DdotApi.uploadDdot(this.ddotFile)
                 .then(response => {
-                    this.loading = false;
                     this.workflowErrors(response);
                 })
                 .catch(error => {
-                    this.loading = false;
                     this.workflowErrors(error.response);
+                })
+                .finally(() => {
+                        this.loading = false;
                 });
         },
         validateDdotFile() {
             this.loading = true;
             DdotApi.validateDdot(this.ddotFile)
                 .then(response => {
-                    this.loading = false;
                     this.workflowErrors(response); 
                 })
                 .catch(error => {
-                    this.loading = true;
                     this.workflowErrors(error.response);
+                })
+                .finally(() => {
+                        this.loading = false;
                 });
+;
         },
         parseMessage(message){
             if (message.includes("_message") || (message.includes("validation_errors"))){

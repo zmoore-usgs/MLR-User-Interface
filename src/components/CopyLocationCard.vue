@@ -63,12 +63,13 @@ export default {
             this.loading = true;
             LegacyLocationApi.postExport(this.agencyCode, this.siteNumber)
                 .then(response => {
-                    this.loading = false;
                     this.handleExportWorkflowError(response);
                 })
                 .catch(error => {
-                    this.loading = false;
                     this.handleExportWorkflowError(error.response)
+                })
+                .finally(() => {
+                        this.loading = false;
                 });
         },
         handleExportWorkflowError(response) {
