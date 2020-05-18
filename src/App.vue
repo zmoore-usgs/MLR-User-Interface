@@ -12,7 +12,7 @@
                     <CopyLocationCard @exportWorkflow="setReportData" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
-                <v-col>
+                <v-col v-if="showStationChange">
                     <UpdatePrimaryKeyCard @changeWorkflow="setReportData" />
                 </v-col>
             </v-row>
@@ -80,6 +80,7 @@ export default {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: {},
+            showStationChange: (process.env.VUE_APP_ENABLE_STATION_CHANGE === "true") ? true : false
         };
     },
     created: function() {
