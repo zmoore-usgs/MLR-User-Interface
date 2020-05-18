@@ -5,15 +5,15 @@
         <v-content>
             <v-row>
                 <v-col>
-                    <DdotProcessCard @validateWorkflow="showValidateReport" />
+                    <DdotProcessCard @validateWorkflow="setReportData" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <CopyLocationCard @exportWorkflow="showExportReport" />
+                    <CopyLocationCard @exportWorkflow="setReportData" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <UpdatePrimaryKeyCard @changeWorkflow="showUpdatePrimaryKeyReport" />
+                    <UpdatePrimaryKeyCard @changeWorkflow="setReportData" />
                 </v-col>
             </v-row>
             <v-card v-if="responseData">
@@ -85,8 +85,13 @@ export default {
     created: function() {
         this.readAccessToken();
     },
-
     methods: {
+        setReportData(reportType, responseData, workflowFailureMsg){
+            this.responseData = responseData;
+            this.exportReport = (reportType === "exportReport") ? workflowFailureMsg : null;
+            this.validateReport = (reportType === "validateReport") ? workflowFailureMsg : null;
+            this.updatePrimaryKeyReport = (reportType === "updatePrimaryKeyReport") ? workflowFailureMsg : null;
+        },
         readAccessToken() {
             var accessToken = new URL(location.href).searchParams.get(
                 "mlrAccessToken"
@@ -97,24 +102,6 @@ export default {
             } else {
                 window.location = axios.defaults.baseURL + "auth/login";
             }
-        },
-        showValidateReport(responseData, workflowFailureMsg) {
-            this.exportReport = null;
-            this.validateReport = workflowFailureMsg;
-            this.updatePrimaryKeyReport = null;
-            this.responseData = responseData;
-        },
-        showExportReport(responseData, workflowFailureMsg) {
-            this.exportReport = workflowFailureMsg;
-            this.validateReport = null;
-            this.updatePrimaryKeyReport = null;
-            this.responseData = responseData;
-        },
-        showUpdatePrimaryKeyReport(responseData, workflowFailureMsg) {
-            this.exportReport = null;
-            this.validateReport = null;
-            this.updatePrimaryKeyReport = workflowFailureMsg;
-            this.responseData = responseData;
         },
         downloadStepReport() {
             var dataStr =

@@ -398,8 +398,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeSuccessResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeSuccessParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeSuccessResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeSuccessParsed);
     });
 
     it('Emits proper response for failure due to location not found', async () => {
@@ -414,8 +414,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeErrorNotFoundResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeErrorNotFoundParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeErrorNotFoundResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeErrorNotFoundParsed);
     });
 
     it('Emits proper response for validation fatal error', async () => {
@@ -430,8 +430,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeFatalErrorResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeFatalErrorParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeFatalErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeFatalErrorParsed);
     });
 
     it('Emits proper response for validation no CRU Service available errors', async () => {
@@ -446,8 +446,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeNoCruServiceErrorResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoCruServiceErrorParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoCruServiceErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeNoCruServiceErrorParsed);
     });
 
     it('Emits proper response for validation no Export Service available errors', async () => {
@@ -462,8 +462,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeNoExportServiceErrorResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoExportServiceErrorParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoExportServiceErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeNoExportServiceErrorParsed);
     });
 
     it('Emits proper response for validation no Notification Service available errors', async () => {
@@ -478,8 +478,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeNoNotificationServiceErrorResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoNotificationServiceErrorParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeNoNotificationServiceErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeNoNotificationServiceErrorParsed);
     });
 
     it('Emits proper response for validation duplicate station errors', async () => {
@@ -494,8 +494,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeDuplicateStationErrorResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeDuplicateStationErrorParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeDuplicateStationErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeDuplicateStationErrorParsed);
     });
 
     it('Emits proper response for internal server error', async () => {
@@ -510,8 +510,8 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().changeWorkflow).toBeTruthy();
-        expect(wrapper.emitted().changeWorkflow[0][0]).toEqual(stationChangeInternalServerErrorResponse.data);
-        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeInternalServerErrorParsed);
+        expect(wrapper.emitted().changeWorkflow[0][1]).toEqual(stationChangeInternalServerErrorResponse.data);
+        expect(wrapper.emitted().changeWorkflow[0][2]).toEqual(stationChangeInternalServerErrorParsed);
     });
 
 });

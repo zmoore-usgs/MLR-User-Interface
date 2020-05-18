@@ -88,7 +88,7 @@ export default {
                     }
                 }
             }.bind(this));
-            this.$emit("exportWorkflow", response.data, workflowFailureMsg);
+            this.$emit("exportWorkflow", "exportReport", response.data, workflowFailureMsg);
         },
         parseErrorMessage(message){
             if (message.includes("error_message")){

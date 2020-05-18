@@ -238,8 +238,9 @@ describe('App.vue', () => {
             updatePrimaryKeyReport: null
 		});
 
-        wrapper.vm.showExportReport(copySuccessResponse, exportSuccessReport);
+        wrapper.vm.setReportData("exportReport", copySuccessResponse, exportSuccessReport);
 
+        await Vue.nextTick();
         await Vue.nextTick();
 
         expect(wrapper.vm.responseData).toEqual(copySuccessResponse);
@@ -261,7 +262,7 @@ describe('App.vue', () => {
             updatePrimaryKeyReport: null
 		});
 
-        wrapper.vm.showExportReport(copyErrorResponse, exportErrorReport);
+        wrapper.vm.setReportData("exportReport", copyErrorResponse, exportErrorReport);
 
         await Vue.nextTick();
 
@@ -284,7 +285,7 @@ describe('App.vue', () => {
             updatePrimaryKeyReport: null
 		});
 
-        wrapper.vm.showValidateReport(validateSuccessResponse, validateSuccessParsed);
+        wrapper.vm.setReportData("validateReport", validateSuccessResponse, validateSuccessParsed);
 
         await Vue.nextTick();
 
@@ -307,7 +308,7 @@ describe('App.vue', () => {
             updatePrimaryKeyReport: null
 		});
 
-        wrapper.vm.showValidateReport(validateFatalErrorResponse, validateFatalErrorParsed);
+        wrapper.vm.setReportData("validateReport", validateFatalErrorResponse, validateFatalErrorParsed);
 
         await Vue.nextTick();
 
@@ -330,7 +331,7 @@ describe('App.vue', () => {
             updatePrimaryKeyReport: null
 		});
 
-        wrapper.vm.showUpdatePrimaryKeyReport(stationChangeSuccessResponse, stationChangeSuccessParsed);
+        wrapper.vm.setReportData("updatePrimaryKeyReport", stationChangeSuccessResponse, stationChangeSuccessParsed);
 
         await Vue.nextTick();
 

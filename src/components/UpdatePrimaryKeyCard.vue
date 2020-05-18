@@ -185,7 +185,7 @@ export default {
                     };
                 }
             }
-            this.$emit("changeWorkflow", response.data, workflowFailureMsg);
+            this.$emit("changeWorkflow", "updatePrimaryKeyReport", response.data, workflowFailureMsg);
         },
         parseSiteErrorRows(errorList) {
             var result = [];

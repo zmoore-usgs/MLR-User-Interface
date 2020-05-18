@@ -152,7 +152,7 @@ export default {
                     };
                 }
             }
-            this.$emit("validateWorkflow", response.data, workflowFailureMsg);
+            this.$emit("validateWorkflow", "validateReport", response.data, workflowFailureMsg);
         },
         parseSiteErrorRows(errorList) {
             var result = [];

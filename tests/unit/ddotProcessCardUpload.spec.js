@@ -443,8 +443,8 @@ describe('DdotProcessCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateAndProcessSuccessWarningResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessSuccessWarningParsed);
+        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessSuccessWarningResponse.data);
+        expect(wrapper.emitted().validateWorkflow[0][2]).toEqual(validateAndProcessSuccessWarningParsed);
     });
 
     it('Emits proper response for success', async () => {
@@ -465,8 +465,8 @@ describe('DdotProcessCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateAndProcessSuccessResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessSuccessParsed);
+        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessSuccessResponse.data);
+        expect(wrapper.emitted().validateWorkflow[0][2]).toEqual(validateAndProcessSuccessParsed);
     });
 
     it('Emits proper response for failure due to location not found', async () => {
@@ -487,8 +487,8 @@ describe('DdotProcessCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateAndProcessErrorNotFoundResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessErrorNotFoundParsed);
+        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessErrorNotFoundResponse.data);
+        expect(wrapper.emitted().validateWorkflow[0][2]).toEqual(validateAndProcessErrorNotFoundParsed);
     });
 
     it('Emits proper response for validation fatal error', async () => {
@@ -509,8 +509,8 @@ describe('DdotProcessCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateAndProcessFatalErrorResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessFatalErrorParsed);
+        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessFatalErrorResponse.data);
+        expect(wrapper.emitted().validateWorkflow[0][2]).toEqual(validateAndProcessFatalErrorParsed);
     });
 
     it('Emits proper response for validation and process workflow-level errors', async () => {
@@ -531,8 +531,8 @@ describe('DdotProcessCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateAndProcessWorkflowLevelErrorsResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessWorkflowLevelErrorsParsed);
+        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessWorkflowLevelErrorsResponse.data);
+        expect(wrapper.emitted().validateWorkflow[0][2]).toEqual(validateAndProcessWorkflowLevelErrorsParsed);
     });
 
     it('Emits proper response for validation and process no CRU Service available errors', async () => {
@@ -553,8 +553,8 @@ describe('DdotProcessCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateAndProcessNoCruServiceErrorResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessNoCruServiceErrorParsed);
+        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessNoCruServiceErrorResponse.data);
+        expect(wrapper.emitted().validateWorkflow[0][2]).toEqual(validateAndProcessNoCruServiceErrorParsed);
     });
 
     it('Emits proper response for validation and process duplicate station errors', async () => {
@@ -575,8 +575,8 @@ describe('DdotProcessCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().validateWorkflow).toBeTruthy();
-        expect(wrapper.emitted().validateWorkflow[0][0]).toEqual(validateAndProcessDuplicateStationErrorResponse.data);
-        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessDuplicateStationErrorParsed);
+        expect(wrapper.emitted().validateWorkflow[0][1]).toEqual(validateAndProcessDuplicateStationErrorResponse.data);
+        expect(wrapper.emitted().validateWorkflow[0][2]).toEqual(validateAndProcessDuplicateStationErrorParsed);
     });
     
 });
