@@ -5,11 +5,15 @@
         <v-content>
             <v-row>
                 <v-col>
-                    <DdotProcessCard @validateWorkflow="showValidateReport" />
+                    <DdotProcessCard @validateWorkflow="setReportData" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <CopyLocationCard @exportWorkflow="showExportReport" />
+                    <CopyLocationCard @exportWorkflow="setReportData" />
+                </v-col>
+                <v-divider vertical color="black"></v-divider>
+                <v-col>
+                    <UpdatePrimaryKeyCard @changeWorkflow="setReportData" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
@@ -25,11 +29,14 @@
                     <v-list-item>User: {{responseData.userName}}</v-list-item>
                     <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
                     <v-list-item>Input File: {{handleNullAttributes(responseData.inputFileName)}}</v-list-item>
-                    <v-list-item>
-                        <ExportReport v-if="exportReport" :report="exportReport" />
+                    <v-list-item v-if="exportReport">
+                        <ExportReport :report="exportReport" />
                     </v-list-item>
-                    <v-list-item>
-                        <ValidateReport v-if="validateReport" :report="validateReport" />
+                    <v-list-item v-if="validateReport">
+                        <ValidateReport :report="validateReport" />
+                    </v-list-item>
+                    <v-list-item v-if="updatePrimaryKeyReport">
+                        <UpdatePrimaryKeyReport :report="updatePrimaryKeyReport" />
                     </v-list-item>
                     <v-list-item>
                         <v-btn
@@ -52,10 +59,12 @@ import MLRFooter from "@/components/MLRFooter";
 import USGSHeaderBar from "@/components/USGSHeaderBar";
 import DdotProcessCard from "@/components/DdotProcessCard";
 import CopyLocationCard from "@/components/CopyLocationCard";
+import UpdatePrimaryKeyCard from "@/components/UpdatePrimaryKeyCard";
 import ExportReport from "@/components/ExportReport";
 import ValidateReport from "@/components/ValidateReport";
 import AuditTable from "@/components/AuditTable";
 import AuditTableRetrieverCard from "@/components/AuditTableRetrieverCard";
+import UpdatePrimaryKeyReport from "@/components/UpdatePrimaryKeyReport";
 import axios from "axios";
 
 export default {
@@ -67,10 +76,12 @@ export default {
         USGSHeaderBar,
         DdotProcessCard,
         CopyLocationCard,
+        UpdatePrimaryKeyCard,
         ExportReport,
         ValidateReport,
         AuditTable,
-        AuditTableRetrieverCard
+        AuditTableRetrieverCard,
+        UpdatePrimaryKeyReport
     },
 
     data() {
@@ -79,14 +90,25 @@ export default {
             responseData: null,
             validateReport: null,
             exportReport: {},
-            auditTable: []
+            auditTable: [],
+            updatePrimaryKeyReport: {}
         };
     },
     created: function() {
         this.readAccessToken();
     },
-
     methods: {
+        setReportData(reportType, responseData, workflowFailureMsg) {
+            this.responseData = responseData;
+            this.exportReport =
+                reportType === "exportReport" ? workflowFailureMsg : null;
+            this.validateReport =
+                reportType === "validateReport" ? workflowFailureMsg : null;
+            this.updatePrimaryKeyReport =
+                reportType === "updatePrimaryKeyReport"
+                    ? workflowFailureMsg
+                    : null;
+        },
         readAccessToken() {
             var accessToken = new URL(location.href).searchParams.get(
                 "mlrAccessToken"
@@ -98,23 +120,9 @@ export default {
                 window.location = axios.defaults.baseURL + "auth/login";
             }
         },
-        showValidateReport(responseData, workflowFailureMsg) {
-            this.exportReport = null;
-            this.validateReport = workflowFailureMsg;
-            this.auditTable = [];
-            this.responseData = responseData;
-        },
-        showExportReport(responseData, workflowFailureMsg) {
-            this.exportReport = workflowFailureMsg;
-            this.validateReport = null;
-            this.auditTable = [];
-            this.responseData = responseData;
-        },
         showAuditTable(auditTable) {
-            this.exportReport = null;
-            this.validateReport = null;
+            this.setReportData(null, null, null);
             this.auditTable = auditTable;
-            this.responseData = null;
         },
         downloadStepReport() {
             var dataStr =
