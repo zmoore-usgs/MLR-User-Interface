@@ -1,80 +1,118 @@
 <template>
-        <v-card flat>
-            <v-card-title>Upload and Process a Ddot file</v-card-title>
-            <v-card-subtitle>When creating or modifying sites outside your Center, please coordinate with the other Center's Local Data Manager to ensure continuity of ownership</v-card-subtitle>
-            <v-card-text>
-                <v-form>
-                    <v-file-input v-model="ddotFile" label="Select Ddot File to Upload"></v-file-input>
-                </v-form>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn class="mx-2 validate" color="primary" @click="validateButtonClicked">Validate</v-btn>
-                <v-btn class="upload" color="primary" @click="uploadButtonClicked">Validate and Update records</v-btn>
-            </v-card-actions>
-            <v-dialog 
+    <v-card flat>
+        <v-card-title>Station Change</v-card-title>
+        <v-card-text>
+            <v-row>
+                    <v-col cols="2" sm="6" md="4">
+                    <v-text-field
+                        v-model="oldAgencyCode"
+                        :rules="requiredRules"
+                        label="Agency Code"
+                        required
+                    ></v-text-field>
+                    </v-col>
+                    <v-col cols="2" sm="6" md="6">
+                    <v-text-field
+                        v-model="oldSiteNumber"
+                        :rules="requiredRules"
+                        label="Site Number"
+                        required
+                    ></v-text-field>
+                    </v-col>
+            </v-row>
+            <v-row>
+                    <v-col cols="2" sm="6" md="4">
+                    <v-text-field
+                        v-model="newAgencyCode"
+                        :rules="requiredRules"
+                        label="New Agency Code"
+                        required
+                    ></v-text-field>
+                    </v-col>
+                <v-col cols="2" sm="6" md="6">
+                    <v-text-field
+                        v-model="newSiteNumber"
+                        :rules="requiredRules"
+                        label="New Site Number"
+                        required
+                    ></v-text-field>
+                </v-col>
+            </v-row>
+            <v-row>
+            <v-text-field
+                v-model="reasonText"
+                :counter="64"
+                :rules="validReasonText"
+                label="Reason for change"
+                required
+            ></v-text-field>
+            </v-row>
+        </v-card-text>
+        <v-card-actions>
+            <v-btn color="primary" @click="updatePrimaryKey">Station Change</v-btn>
+            <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                    <v-btn color="primary" v-on="on" icon class="mx-2">
+                        <v-icon>mdi-help-circle</v-icon>
+                    </v-btn>
+                </template>
+                <span>Enter the old agency code and site number and the new agency code and site number, and the reason for an existing site that you'd like to update the primary key for.</span>
+            </v-tooltip>
+        </v-card-actions>
+        <v-dialog 
             hide-overlay width="300"
             v-model="loading" 
             >
-                <v-card>
-                    <v-card-text>
-                        Processing your request
-                        <v-progress-linear 
-                            indeterminate 
-                            class="mb-0"
-                        ></v-progress-linear>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
-        </v-card>
+            <v-card>
+                <v-card-text>
+                    Processing your request
+                    <v-progress-linear 
+                        indeterminate 
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+    </v-card>
 </template>
 
 <script>
-import DdotApi from "@/services/api/DdotApi.js";
+import _ from "lodash";
+import LegacyLocationApi from "@/services/api/LegacyLocationApi.js";
 
 export default {
-    name: "DdotProcessCard",
+    name: "UpdatePrimaryKeyCard",
 
     data() {
         return {
-            ddotFile: null,
-            districtCodes: null,
-            transactionTypes: null,
+            oldAgencyCode: "",
+            oldSiteNumber: "",
+            newAgencyCode: "",
+            newSiteNumber: "",
+            reasonText:"",
+            requiredRules: [
+                field => !!field || 'Item is required'
+            ],
+            validReasonText: [
+                text => !!text || 'Item is required',
+                text => text && /^[0-9a-zA-Z ]+$/.test(text) || 'Reason text must contain only letters, numbers and spaces.'
+            ],
             loading: false
         };
     },
     methods: {
-        validateButtonClicked() {
-            this.validateDdotFile();
-        },
-        uploadButtonClicked() {
-            this.uploadDdotFile();
-        },
-        uploadDdotFile() {
+        updatePrimaryKey() {
             this.loading = true;
-            DdotApi.uploadDdot(this.ddotFile)
+            LegacyLocationApi.postChange(this.oldAgencyCode, this.oldSiteNumber, this.newAgencyCode, this.newSiteNumber, this.reasonText)
                 .then(response => {
-                    this.workflowErrors(response);
+                    this.handleWorkflowError(response);
                 })
                 .catch(error => {
-                    this.workflowErrors(error.response);
+                    this.handleWorkflowError(error.response);
                 })
                 .finally(() => {
                         this.loading = false;
                 });
-        },
-        validateDdotFile() {
-            this.loading = true;
-            DdotApi.validateDdot(this.ddotFile)
-                .then(response => {
-                    this.workflowErrors(response); 
-                })
-                .catch(error => {
-                    this.workflowErrors(error.response);
-                })
-                .finally(() => {
-                        this.loading = false;
-                });
-;
         },
         parseMessage(message){
             if (message.includes("_message") || (message.includes("validation_errors"))){
@@ -83,7 +121,7 @@ export default {
                 return message;
             }
         },
-        workflowErrors(response) {
+        handleWorkflowError(response) {
             var workflowFailureMsg = {};
             var workflowErrors = null;
             if (response.data.name === undefined){
@@ -103,27 +141,22 @@ export default {
                 if (response.data.workflowSteps.length > 0) {
                     var workflowFailure = response.data.workflowSteps.filter(
                         function(x) {
-                            return x.name.search("workflow") > 0;
+                            return x.name.search("Workflow") > 0;
                         }
                     );
                     if (workflowFailure.length > 0) {
                         workflowFailureMsg.workflowStatus = {
                             name: workflowFailure[0].name,
                             message:
-                                " (" +
-                                JSON.parse(workflowFailure[0].details)
-                                    .error_message +
-                                ") : No Transactions were processed. Error details listed below: "
+                                this.parseMessage(workflowFailure[0].details)
                         };
                     }
-
                     workflowErrors = response.data.workflowSteps.filter(function(
                         x
                     ) {
-                        return x.name.search("workflow") < 0;
+                        return x.name.search("Workflow") < 0;
                     });
                 }
-
                 if (workflowFailureMsg.workflowStatus === undefined) {
                     workflowFailureMsg.workflowStatus = {
                         name: "Status",
@@ -134,7 +167,6 @@ export default {
                             " Transactions Failed"
                     };
                 }
-
                 if (workflowErrors != null) {
                     workflowFailureMsg.workflowLevelErrors = {
                         name: "Workflow-level Errors",
@@ -147,7 +179,6 @@ export default {
                         });
                     });
                 }
-
                 if (response.data.sites.length > 0) {
                     workflowFailureMsg.siteErrors = {
                         name: "Site-level Errors and Warnings",
@@ -155,7 +186,7 @@ export default {
                     };
                 }
             }
-            this.$emit("validateWorkflow", "validateReport", response.data, workflowFailureMsg);
+            this.$emit("changeWorkflow", "updatePrimaryKeyReport", response.data, workflowFailureMsg);
         },
         parseSiteErrorRows(errorList) {
             var result = [];
@@ -212,26 +243,6 @@ export default {
                                         " - " +
                                         detailMsg.validator_message
                                             .fatal_error_message[key]
-                                });
-                            });
-                        }
-                        if (
-                            detailMsg.validator_message.hasOwnProperty(
-                                "warning_message"
-                            )
-                        ) {
-                            Object.keys(
-                                detailMsg.validator_message.warning_message
-                            ).forEach(function(key) {
-                                result.push({
-                                    name: site,
-                                    message:
-                                        st.name +
-                                        " Warning: " +
-                                        key +
-                                        " - " +
-                                        detailMsg.validator_message
-                                            .warning_message[key]
                                 });
                             });
                         }

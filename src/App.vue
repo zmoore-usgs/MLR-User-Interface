@@ -5,11 +5,15 @@
         <v-content>
             <v-row>
                 <v-col>
-                    <DdotProcessCard @validateWorkflow="showValidateReport" />
+                    <DdotProcessCard @validateWorkflow="setReportData" />
                 </v-col>
                 <v-divider vertical color="black"></v-divider>
                 <v-col>
-                    <CopyLocationCard @exportWorkflow="showExportReport" />
+                    <CopyLocationCard @exportWorkflow="setReportData" />
+                </v-col>
+                <v-divider vertical color="black"></v-divider>
+                <v-col>
+                    <UpdatePrimaryKeyCard @changeWorkflow="setReportData" />
                 </v-col>
             </v-row>
             <v-card v-if="responseData">
@@ -18,11 +22,14 @@
                     <v-list-item>User: {{responseData.userName}}</v-list-item>
                     <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
                     <v-list-item>Input File: {{handleNullAttributes(responseData.inputFileName)}}</v-list-item>
-                    <v-list-item>
-                        <ExportReport v-if="exportReport" :report="exportReport" />
+                    <v-list-item v-if="exportReport">
+                        <ExportReport :report="exportReport" />
                     </v-list-item>
-                    <v-list-item>
-                        <ValidateReport v-if="validateReport" :report="validateReport" />
+                    <v-list-item v-if="validateReport">
+                        <ValidateReport :report="validateReport" />
+                    </v-list-item>
+                    <v-list-item v-if="updatePrimaryKeyReport">
+                        <UpdatePrimaryKeyReport :report="updatePrimaryKeyReport" />
                     </v-list-item>
                     <v-list-item>
                         <v-btn
@@ -36,13 +43,6 @@
         </v-content>
         <MLRFooter />
         <USGSFooter />
-        <v-snackbar v-model="snackbarShow" :color="snackbarColor">
-            {{snackbarMessage}}
-            <v-spacer></v-spacer>
-            <v-btn icon @click="snackbarShow=false">
-                <v-icon>mdi-close</v-icon>
-            </v-btn>
-        </v-snackbar>
     </v-app>
 </template>
 
@@ -52,10 +52,11 @@ import MLRFooter from "@/components/MLRFooter";
 import USGSHeaderBar from "@/components/USGSHeaderBar";
 import DdotProcessCard from "@/components/DdotProcessCard";
 import CopyLocationCard from "@/components/CopyLocationCard";
+import UpdatePrimaryKeyCard from "@/components/UpdatePrimaryKeyCard";
 import ExportReport from "@/components/ExportReport";
 import ValidateReport from "@/components/ValidateReport";
+import UpdatePrimaryKeyReport from "@/components/UpdatePrimaryKeyReport";
 import axios from "axios";
-import { EventBus } from "@/components/EventBus.js";
 
 export default {
     name: "App",
@@ -66,8 +67,10 @@ export default {
         USGSHeaderBar,
         DdotProcessCard,
         CopyLocationCard,
+        UpdatePrimaryKeyCard,
         ExportReport,
-        ValidateReport
+        ValidateReport,
+        UpdatePrimaryKeyReport
     },
 
     data() {
@@ -76,30 +79,19 @@ export default {
             responseData: null,
             validateReport: null,
             exportReport: {},
-            snackbarShow: false
+            updatePrimaryKeyReport: {},
         };
     },
     created: function() {
         this.readAccessToken();
-
-        EventBus.$on("snackbar-update", response => {
-            this.showSnackbarMessage(response);
-        });
     },
-
-    computed: {
-        responseSuccessful() {
-            return this.response.status > 199 && this.response.status < 300;
-        },
-        snackbarColor() {
-            return this.responseSuccessful ? "green" : "red";
-        },
-        snackbarMessage() {
-            return this.responseSuccessful ? "Success!" : this.response;
-        }
-    },
-
     methods: {
+        setReportData(reportType, responseData, workflowFailureMsg){
+            this.responseData = responseData;
+            this.exportReport = (reportType === "exportReport") ? workflowFailureMsg : null;
+            this.validateReport = (reportType === "validateReport") ? workflowFailureMsg : null;
+            this.updatePrimaryKeyReport = (reportType === "updatePrimaryKeyReport") ? workflowFailureMsg : null;
+        },
         readAccessToken() {
             var accessToken = new URL(location.href).searchParams.get(
                 "mlrAccessToken"
@@ -110,20 +102,6 @@ export default {
             } else {
                 window.location = axios.defaults.baseURL + "auth/login";
             }
-        },
-        showSnackbarMessage(response) {
-            this.response = response;
-            this.snackbarShow = true;
-        },
-        showValidateReport(responseData, workflowFailureMsg) {
-            this.exportReport = null;
-            this.validateReport = workflowFailureMsg;
-            this.responseData = responseData;
-        },
-        showExportReport(responseData, workflowFailureMsg) {
-            this.exportReport = workflowFailureMsg;
-            this.validateReport = null;
-            this.responseData = responseData;
         },
         downloadStepReport() {
             var dataStr =

@@ -25,6 +25,10 @@ describe('CopyLocationCard.vue', () => {
     let localVue;
     let vuetify;
     
+    const app = document.createElement ("div");
+    app.setAttribute ("data-app", true);
+    document.body.append (app);
+    
     const mountFactory = function(args) {
         return mount(CopyLocationCard, {
             localVue,
@@ -183,8 +187,8 @@ describe('CopyLocationCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().exportWorkflow).toBeTruthy();
-        expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copySuccessResponse.data);
-        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copySuccessParsed);
+        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copySuccessResponse.data);
+        expect(wrapper.emitted().exportWorkflow[0][2]).toEqual(copySuccessParsed);
         
     });
 
@@ -204,8 +208,8 @@ describe('CopyLocationCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().exportWorkflow).toBeTruthy();
-        expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copyErrorResponse.data);
-        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyErrorParsed);
+        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyErrorResponse.data);
+        expect(wrapper.emitted().exportWorkflow[0][2]).toEqual(copyErrorParsed);
     });
 
     it('Emits proper response for backing service failure', async () => {
@@ -224,7 +228,7 @@ describe('CopyLocationCard.vue', () => {
         await Vue.nextTick();
 
         expect(wrapper.emitted().exportWorkflow).toBeTruthy();
-        expect(wrapper.emitted().exportWorkflow[0][0]).toEqual(copyServiceErrorResponse.data);
-        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyServiceErrorParsed);
+        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyServiceErrorResponse.data);
+        expect(wrapper.emitted().exportWorkflow[0][2]).toEqual(copyServiceErrorParsed);
     });
 });
