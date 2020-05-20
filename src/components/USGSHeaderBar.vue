@@ -10,6 +10,9 @@
         />
 
         <v-spacer></v-spacer>
+        <v-btn to="/sites" class="mx-2">Sites</v-btn>
+        <v-btn to="/auditTable" class="mx-2">Audit Table</v-btn>
+        <v-spacer></v-spacer>
 
         <v-btn href="https://www.usgs.gov" title="Link to main USGS page" text>
             <span class="mr-2">USGS Home</span>
