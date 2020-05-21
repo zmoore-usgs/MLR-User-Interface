@@ -30,8 +30,8 @@ export default {
             responseData: null,
             validateReport: null,
             exportReport: {},
-            updatePrimaryKeyReport: {},
-            auditTable: []
+            auditTable: [],
+            updatePrimaryKeyReport: {}            
         };
     },
     created: function() {
