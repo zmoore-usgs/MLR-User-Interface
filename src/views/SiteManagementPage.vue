@@ -67,10 +67,10 @@ export default {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: {},
-            showStationChange: (process.env.VUE_APP_ENABLE_STATION_CHANGE === "true") ? true : false
+            showStationChange: (this.$config.STATION_CHANGE_ENABLED === "true") ? true : false
         };
     },
-
+    
     methods: {
         setReportData(reportType, responseData, workflowFailureMsg) {
             this.responseData = responseData;
