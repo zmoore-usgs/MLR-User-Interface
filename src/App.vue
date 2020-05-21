@@ -1,7 +1,6 @@
 <template>
     <v-app>
         <USGSHeaderBar />
-
         <v-content>
             <v-row>
                 <v-col>
@@ -41,6 +40,9 @@
                 </v-list>
             </v-card>
         </v-content>
+        <keep-alive>
+            <router-view></router-view>
+        </keep-alive>
         <MLRFooter />
         <USGSFooter />
     </v-app>
@@ -50,12 +52,6 @@
 import USGSFooter from "@/components/USGSFooter";
 import MLRFooter from "@/components/MLRFooter";
 import USGSHeaderBar from "@/components/USGSHeaderBar";
-import DdotProcessCard from "@/components/DdotProcessCard";
-import CopyLocationCard from "@/components/CopyLocationCard";
-import UpdatePrimaryKeyCard from "@/components/UpdatePrimaryKeyCard";
-import ExportReport from "@/components/ExportReport";
-import ValidateReport from "@/components/ValidateReport";
-import UpdatePrimaryKeyReport from "@/components/UpdatePrimaryKeyReport";
 import axios from "axios";
 
 export default {
@@ -64,13 +60,7 @@ export default {
     components: {
         USGSFooter,
         MLRFooter,
-        USGSHeaderBar,
-        DdotProcessCard,
-        CopyLocationCard,
-        UpdatePrimaryKeyCard,
-        ExportReport,
-        ValidateReport,
-        UpdatePrimaryKeyReport
+        USGSHeaderBar
     },
 
     data() {
@@ -80,44 +70,20 @@ export default {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: {},
-            showStationChange: (process.env.VUE_APP_ENABLE_STATION_CHANGE === "true") ? true : false
+            auditTable: []
         };
     },
     created: function() {
         this.readAccessToken();
     },
     methods: {
-        setReportData(reportType, responseData, workflowFailureMsg){
-            this.responseData = responseData;
-            this.exportReport = (reportType === "exportReport") ? workflowFailureMsg : null;
-            this.validateReport = (reportType === "validateReport") ? workflowFailureMsg : null;
-            this.updatePrimaryKeyReport = (reportType === "updatePrimaryKeyReport") ? workflowFailureMsg : null;
-        },
         readAccessToken() {
-            var accessToken = new URL(location.href).searchParams.get(
-                "mlrAccessToken"
-            );
+            var accessToken = this.$route.query.mlrAccessToken;
             if (accessToken) {
                 axios.defaults.headers.common["X-Auth-Token"] = accessToken;
-                window.history.replaceState({}, document.title, "/");
+                this.$router.push("/");
             } else {
                 window.location = axios.defaults.baseURL + "auth/login";
-            }
-        },
-        downloadStepReport() {
-            var dataStr =
-                "data:text/json;charset=utf-8," +
-                encodeURIComponent(JSON.stringify(this.responseData, null, 4));
-            var downloadAnchorNode = document.createElement("a");
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "mlr-results.json");
-            document.body.appendChild(downloadAnchorNode); // required for firefox
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        },
-        handleNullAttributes(attr){
-            if (attr == null){
-                return "null";
             }
         }
     }
