@@ -39,12 +39,14 @@ export default {
     },
     methods: {
         readAccessToken() {
-            var accessToken = this.$route.query.mlrAccessToken;
-            if (accessToken) {
-                axios.defaults.headers.common["X-Auth-Token"] = accessToken;
-                this.$router.push("/");
-            } else {
-                window.location = axios.defaults.baseURL + "auth/login";
+            if (this.$route) {
+                var accessToken = this.$route.query.mlrAccessToken;
+                if (accessToken) {
+                    axios.defaults.headers.common["X-Auth-Token"] = accessToken;
+                    this.$router.push("/");
+                } else {
+                    window.location = axios.defaults.baseURL + "auth/login";
+                }
             }
         }
     }
