@@ -31,7 +31,7 @@ export default {
             validateReport: null,
             exportReport: {},
             auditTable: [],
-            updatePrimaryKeyReport: {}            
+            updatePrimaryKeyReport: {}
         };
     },
     created: function() {
