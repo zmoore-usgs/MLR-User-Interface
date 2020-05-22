@@ -13,8 +13,8 @@ fetch(process.env.BASE_URL + "config.json")
   .then(config => {
       Vue.prototype.$config = config
   }).catch(error => {
-  Vue.prototype.$config = {"STATION_CHANGE_ENABLED": "false"}
-})
+      Vue.prototype.$config = {"STATION_CHANGE_ENABLED": "false"}
+  })
 
 new Vue({
   vuetify,
