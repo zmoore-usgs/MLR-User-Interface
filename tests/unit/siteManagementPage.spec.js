@@ -215,8 +215,13 @@ describe('SiteManagementPage.vue', () => {
         jest.clearAllMocks();
     });
 
-    it('Renders the input fields and buttons', () => {
-        const wrapper = mountFactory({});
+    it('Renders the input fields and buttons when the Station Change functionality is toggled on', () => {
+        const $config = {STATION_CHANGE_ENABLED: "true"}
+        const wrapper = mountFactory({
+            mocks: {
+                $config
+              }
+        });
 
         expect(wrapper.html()).toContain('Agency Code</label>');
         expect(wrapper.html()).toContain('Site Number</label>');
@@ -228,8 +233,31 @@ describe('SiteManagementPage.vue', () => {
         expect(wrapper.html()).toContain('v-btn');
     });
 
+    it('Renders the input fields and buttons when the Station Change functionality is toggled off', () => {
+        const $config = {STATION_CHANGE_ENABLED: "false"}
+        const wrapper = mountFactory({
+            mocks: {
+                $config
+              }
+        });
+
+        expect(wrapper.html()).toContain('Agency Code</label>');
+        expect(wrapper.html()).toContain('Site Number</label>');
+        expect(wrapper.html()).toContain('Select Ddot File to Upload</label>');
+        expect(wrapper.html()).not.toContain('New Agency Code</label>');
+        expect(wrapper.html()).not.toContain('New Site Number</label>');
+        expect(wrapper.html()).not.toContain('Reason for change</label>');
+        expect(wrapper.html()).toContain('v-text-field');
+        expect(wrapper.html()).toContain('v-btn');
+    });
+
     it('Renders the report for successful Copy Location', async () => {
-        const wrapper = mountFactory({});
+        const $config = {STATION_CHANGE_ENABLED: "true"}
+        const wrapper = mountFactory({
+            mocks: {
+                $config
+              }
+        });
 
         wrapper.setData({
             response: {},
@@ -253,7 +281,12 @@ describe('SiteManagementPage.vue', () => {
     });
 
     it('Renders the report for failure Copy Location', async () => {
-        const wrapper = mountFactory({});
+        const $config = {STATION_CHANGE_ENABLED: "true"}
+        const wrapper = mountFactory({
+            mocks: {
+                $config
+              }
+        });
 
         wrapper.setData({
             response: {},
@@ -276,7 +309,12 @@ describe('SiteManagementPage.vue', () => {
     });
 
     it('Renders the report for successful Validate', async () => {
-        const wrapper = mountFactory({});
+        const $config = {STATION_CHANGE_ENABLED: "true"}
+        const wrapper = mountFactory({
+            mocks: {
+                $config
+              }
+        });
 
         wrapper.setData({
             response: {},
@@ -299,7 +337,12 @@ describe('SiteManagementPage.vue', () => {
     });
 
     it('Renders the report for validation failure', async () => {
-        const wrapper = mountFactory({});
+        const $config = {STATION_CHANGE_ENABLED: "true"}
+        const wrapper = mountFactory({
+            mocks: {
+                $config
+              }
+        });
 
         wrapper.setData({
             response: {},
@@ -322,7 +365,12 @@ describe('SiteManagementPage.vue', () => {
     });
 
     it('Renders the report for successful Station Change', async () => {
-        const wrapper = mountFactory({});
+        const $config = {STATION_CHANGE_ENABLED: "true"}
+        const wrapper = mountFactory({
+            mocks: {
+                $config
+              }
+        });
 
         wrapper.setData({
             response: {},

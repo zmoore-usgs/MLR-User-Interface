@@ -8,8 +8,13 @@ axios.defaults.baseURL = process.env.VUE_APP_API_GATEWAY;
 
 Vue.config.productionTip = false;
 
-new Vue({
-  vuetify,
-  router,
-  render: h => h(App)
-}).$mount("#app");
+fetch(process.env.BASE_URL + "config.json")
+  .then(r => r.json())
+  .then(config => {
+      Vue.prototype.$config = config
+      new Vue({
+      vuetify,
+      router,
+      render: h => h(App)
+    }).$mount("#app")
+})
