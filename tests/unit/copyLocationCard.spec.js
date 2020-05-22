@@ -129,6 +129,12 @@ describe('CopyLocationCard.vue', () => {
         }
     }
 
+    const copyInternalServerErrorResponse = {
+        data: {
+            error_message: "Something bad happened. Contact us with Reference Number: 341013512"
+        }
+    }
+
     const copySuccessParsed = {"exportWorkflowErrors" : 
         {"errors": [],
         "name": "Export Workflow Errors"
@@ -153,6 +159,22 @@ describe('CopyLocationCard.vue', () => {
         ],
         "name": "Export Workflow Errors"
         }}
+
+    const copyInternalServerErrorParsed = {
+        exportWorkflowErrors: {
+            errors: [
+                {
+                    message: "Something bad happened. Contact us with Reference Number: 341013512",
+                    name: "Error"
+                }
+            ],
+            name: "Workflow-level Errors"
+        },
+        workflowStatus: {
+            message: "No sites processed",
+            name: "Status"
+        }
+    }
 
     beforeEach(() => {
         localVue = createLocalVue();
@@ -230,5 +252,25 @@ describe('CopyLocationCard.vue', () => {
         expect(wrapper.emitted().exportWorkflow).toBeTruthy();
         expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyServiceErrorResponse.data);
         expect(wrapper.emitted().exportWorkflow[0][2]).toEqual(copyServiceErrorParsed);
+    });
+
+    it('Emits proper response for internal server error', async () => {
+        postExport.mockImplementation(() => Promise.resolve(
+            copyInternalServerErrorResponse
+        ));
+        const wrapper = mountFactory({});
+        
+        wrapper.setData({
+            agencyCode: "USGS",
+            siteNumber: "1234"
+		});
+        
+        wrapper.find('button').trigger('click');
+
+        await Vue.nextTick();
+
+        expect(wrapper.emitted().exportWorkflow).toBeTruthy();
+        expect(wrapper.emitted().exportWorkflow[0][1]).toEqual(copyInternalServerErrorResponse.data);
+        expect(wrapper.emitted().exportWorkflow[0][2]).toEqual(copyInternalServerErrorParsed);
     });
 });
