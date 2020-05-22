@@ -1,32 +1,42 @@
 <template>
-    <v-form ref="form" v-model="valid">
-        <v-container>
-            <v-card flat>
-                <v-card-title>Audit Table</v-card-title>
+    <div>
+        <v-form ref="form" v-model="valid">
+            <v-container>
+                <v-card flat>
+                    <v-card-title>Audit Table</v-card-title>
+                    <v-card-text>
+                        <v-text-field
+                            :rules="[rules.required, rules.dateTimeFormat]"
+                            v-model="startDate"
+                            label="From"
+                        ></v-text-field>
+                        <v-text-field
+                            :rules="[rules.required, rules.dateTimeFormat]"
+                            v-model="endDate"
+                            label="To"
+                        ></v-text-field>
+                        <v-text-field
+                            :rules="[ rules.onlyOneCode, rules.twoOrThreeChars]"
+                            v-model="districtCode"
+                            max-length="3"
+                            label="District Code"
+                        ></v-text-field>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn :disabled="!valid" color="primary" @click="getAuditTable">Go</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-container>
+        </v-form>
+        <v-dialog hide-overlay width="300" v-model="loading">
+            <v-card>
                 <v-card-text>
-                    <v-text-field
-                        :rules="[rules.required, rules.dateTimeFormat]"
-                        v-model="startDate"
-                        label="From"
-                    ></v-text-field>
-                    <v-text-field
-                        :rules="[rules.required, rules.dateTimeFormat]"
-                        v-model="endDate"
-                        label="To"
-                    ></v-text-field>
-                    <v-text-field
-                        :rules="[ rules.onlyOneCode, rules.twoOrThreeChars]"
-                        v-model="districtCode"
-                        max-length="3"
-                        label="District Code"
-                    ></v-text-field>
+                    Processing your request
+                    <v-progress-linear indeterminate class="mb-0"></v-progress-linear>
                 </v-card-text>
-                <v-card-actions>
-                    <v-btn :disabled="!valid" color="primary" @click="getAuditTable">Go</v-btn>
-                </v-card-actions>
             </v-card>
-        </v-container>
-    </v-form>
+        </v-dialog>
+    </div>
 </template>
 
 <script>
@@ -39,6 +49,7 @@ export default {
             endDate: "",
             districtCode: "",
             valid: true,
+            loading: false,
             rules: {
                 required: value => !!value || "Required.",
                 dateTimeFormat: value => {
@@ -65,13 +76,18 @@ export default {
         getAuditTable() {
             this.validate();
             if (this.valid) {
+                this.loading = true;
                 MonitoringLocationApi.getByDatesAndOptionalDistrictCode(
                     this.startDate,
                     this.endDate,
                     this.districtCode
-                ).then(response => {
-                    this.$emit("auditTable", response.data);
-                });
+                )
+                    .then(response => {
+                        this.$emit("auditTable", response.data);
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
             }
         },
         validate() {
