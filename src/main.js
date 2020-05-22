@@ -12,9 +12,12 @@ fetch(process.env.BASE_URL + "config.json")
   .then(r => r.json())
   .then(config => {
       Vue.prototype.$config = config
-      new Vue({
-      vuetify,
-      router,
-      render: h => h(App)
-    }).$mount("#app")
+  }).catch(error => {
+  Vue.prototype.$config = {"STATION_CHANGE_ENABLED": "false"}
 })
+
+new Vue({
+  vuetify,
+  router,
+  render: h => h(App)
+}).$mount("#app")
