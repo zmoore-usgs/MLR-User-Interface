@@ -1,5 +1,13 @@
 # mlr-ui
 
+You will need to create a file named `config.json` and store it in the `public` folder.  It should have one entry: 
+
+```
+{"STATION_CHANGE_ENABLED": "true"}
+```
+
+This will enable the station change widget to show up.  Do not check it into source control, or it will overwrite the file in S3 upon deploy.
+
 ## Project setup
 ```
 npm install
