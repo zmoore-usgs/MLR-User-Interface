@@ -9,7 +9,7 @@ Vue.use(Vuetify);
 import ExportReport from '@/components/ExportReport.vue'
 import ValidateReport from '@/components/ValidateReport.vue'
 import UpdatePrimaryKeyReport from '@/components/UpdatePrimaryKeyReport.vue'
-import App from '@/App.vue'
+import SiteManagementPage from '@/views/SiteManagementPage.vue'
 
 // Utilities
 import {
@@ -17,86 +17,86 @@ import {
     createLocalVue
 } from '@vue/test-utils'
 
-describe('App.vue', () => {
+describe('SiteManagementPage.vue', () => {
     let localVue;
     let vuetify;
-    
-    const mountFactory = function(args) {
-        return mount(App, {
+
+    const mountFactory = function (args) {
+        return mount(SiteManagementPage, {
             localVue,
             vuetify,
             ...args
         });
     }
     const copySuccessResponse = {
-            name: "Complete Export Workflow",
-            inputFileName: null,
-            reportDateTime: "2020-05-07T18:52:17.889Z",
-            userName: "mlradmin",
-            workflowSteps: [
-                {
-                    name: "Complete Export Workflow",
-                    httpStatus: 200,
-                    success: true,
-                    details: "Transaction File created Successfully."
-                },
-                {
-                    name: "Notification",
-                    httpStatus: 200,
-                    success: true,
-                    details: "Notification sent successfully."
-                }
-            ],
-            sites: [
-                {
-                    agencyCode: "USGS",
-                    siteNumber: "04085498",
-                    success: true,
-                    steps: [
-                        {
-                            name: "Location Get by AgencyCode and SiteNumber",
-                            httpStatus: 200,
-                            success: true,
-                            details: "Location Get Successful"
-                        },
-                        {
-                            name: "Export Add Transaction File",
-                            httpStatus: 200,
-                            success: true,
-                            details: "Transaction File created Successfully."
-                        }
-                    ]
-                }
-            ]
+        name: "Complete Export Workflow",
+        inputFileName: null,
+        reportDateTime: "2020-05-07T18:52:17.889Z",
+        userName: "mlradmin",
+        workflowSteps: [
+            {
+                name: "Complete Export Workflow",
+                httpStatus: 200,
+                success: true,
+                details: "Transaction File created Successfully."
+            },
+            {
+                name: "Notification",
+                httpStatus: 200,
+                success: true,
+                details: "Notification sent successfully."
+            }
+        ],
+        sites: [
+            {
+                agencyCode: "USGS",
+                siteNumber: "04085498",
+                success: true,
+                steps: [
+                    {
+                        name: "Location Get by AgencyCode and SiteNumber",
+                        httpStatus: 200,
+                        success: true,
+                        details: "Location Get Successful"
+                    },
+                    {
+                        name: "Export Add Transaction File",
+                        httpStatus: 200,
+                        success: true,
+                        details: "Transaction File created Successfully."
+                    }
+                ]
+            }
+        ]
     };
 
     const exportSuccessReport = {
-            exportWorkflowErrors: {
-                name: "Export Workflow Errors",
-                errors: []
-            }
+        exportWorkflowErrors: {
+            name: "Export Workflow Errors",
+            errors: []
+        }
     }
 
     const copyErrorResponse = {
-            name: "Complete Export Workflow",
-            inputFileName: null,
-            reportDateTime: "2020-05-07T20:07:45.627Z",
-            userName: "mlradmin",
-            workflowSteps: [
-                {
-                    name: "Complete Export Workflow",
-                    httpStatus: 404,
-                    success: false,
-                    details: "{\"error_message\": \"Requested Location Not Found\"}"
-                },
-                {
-                    name: "Notification",
-                    httpStatus: 200,
-                    success: true,
-                    details: "Notification sent successfully."
-                }
-            ],
-            sites: []
+        name: "Complete Export Workflow",
+        inputFileName: null,
+        reportDateTime: "2020-05-07T20:07:45.627Z",
+        userName: "mlradmin",
+        workflowSteps: [
+            {
+                name: "Complete Export Workflow",
+                httpStatus: 404,
+                success: false,
+                details: "{\"error_message\": \"Requested Location Not Found\"}"
+            },
+            {
+                name: "Notification",
+                httpStatus: 200,
+                success: true,
+                details: "Notification sent successfully."
+            }
+        ],
+        sites: []
     }
 
     const exportErrorReport = {
@@ -104,8 +104,8 @@ describe('App.vue', () => {
             name: "Export Workflow Errors",
             errors: [
                 {
-                message: "Failed: Requested Location Not Found",
-                name: "Complete Export Workflow"
+                    message: "Failed: Requested Location Not Found",
+                    name: "Complete Export Workflow"
                 }
             ]
         }
@@ -132,7 +132,8 @@ describe('App.vue', () => {
     }
 
     const validateFatalErrorResponse = {
-        data: {name: "Validate D dot File",
+        data: {
+            name: "Validate D dot File",
             inputFileName: "d.cabuchwaBadFatalValidation.011",
             reportDateTime: "2020-05-08T18:22:00.455Z",
             userName: "mlradmin",
@@ -186,7 +187,7 @@ describe('App.vue', () => {
             message: "0 Transactions Succeeded, 1 Transactions Failed",
             name: "Status"
         }
-}
+    }
 
     const stationChangeSuccessResponse = {
         data: {
@@ -236,7 +237,7 @@ describe('App.vue', () => {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: null
-		});
+        });
 
         wrapper.vm.setReportData("exportReport", copySuccessResponse, exportSuccessReport);
 
@@ -251,7 +252,7 @@ describe('App.vue', () => {
         expect(wrapper.html()).toContain('<span>Copy Success</span>');
     });
 
-    it('Renders the report for failure Copy Location', async() => {
+    it('Renders the report for failure Copy Location', async () => {
         const wrapper = mountFactory({});
 
         wrapper.setData({
@@ -260,7 +261,7 @@ describe('App.vue', () => {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: null
-		});
+        });
 
         wrapper.vm.setReportData("exportReport", copyErrorResponse, exportErrorReport);
 
@@ -283,7 +284,7 @@ describe('App.vue', () => {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: null
-		});
+        });
 
         wrapper.vm.setReportData("validateReport", validateSuccessResponse, validateSuccessParsed);
 
@@ -297,7 +298,7 @@ describe('App.vue', () => {
         expect(wrapper.html()).toContain('<p>Status: 2 Transactions Succeeded, 0 Transactions Failed</p>');
     });
 
-    it('Renders the report for validation failure', async() => {
+    it('Renders the report for validation failure', async () => {
         const wrapper = mountFactory({});
 
         wrapper.setData({
@@ -306,7 +307,7 @@ describe('App.vue', () => {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: null
-		});
+        });
 
         wrapper.vm.setReportData("validateReport", validateFatalErrorResponse, validateFatalErrorParsed);
 
@@ -329,7 +330,7 @@ describe('App.vue', () => {
             validateReport: null,
             exportReport: {},
             updatePrimaryKeyReport: null
-		});
+        });
 
         wrapper.vm.setReportData("updatePrimaryKeyReport", stationChangeSuccessResponse, stationChangeSuccessParsed);
 
