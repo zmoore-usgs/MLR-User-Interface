@@ -421,7 +421,7 @@ describe('DdotProcessCard.vue', () => {
             errors: [
                 {
                     message: "Something bad happened. Contact us with Reference Number: 341013512",
-                    name: "Internal Server Error"
+                    name: "Error"
                 }
             ],
             name: "Workflow-level Errors"

@@ -43,7 +43,7 @@ export default {
                 var accessToken = this.$route.query.mlrAccessToken;
                 if (accessToken) {
                     axios.defaults.headers.common["X-Auth-Token"] = accessToken;
-                    this.$router.push("/");
+                    this.$router.push("/sites");
                 } else {
                     window.location = axios.defaults.baseURL + "auth/login";
                 }

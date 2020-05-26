@@ -10,7 +10,7 @@
         />
 
         <v-spacer></v-spacer>
-        <v-btn to="/sites" class="mx-2">Sites</v-btn>
+        <v-btn to="/sites" class="mx-2">Monitoring Location Management</v-btn>
         <v-btn to="/auditTable" class="mx-2">Audit Table</v-btn>
         <v-spacer></v-spacer>
 

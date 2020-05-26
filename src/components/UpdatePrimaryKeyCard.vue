@@ -134,7 +134,7 @@ export default {
                         errors: []
                     };
                 workflowFailureMsg.workflowLevelErrors.errors.push({
-                    name: "Internal Server Error",
+                    name: "Error",
                     message: response.data.error_message
                 });
             } else {

@@ -78,17 +78,32 @@ export default {
                 name: "Export Workflow Errors",
                 errors: []
             };
-            _.forEach(response.data.workflowSteps, function(w) {
-                if (w.name === "Complete Export Workflow") {
-                    if (w.success === false) {
-                        workflowFailureMsg.exportWorkflowErrors.errors.push({
-                            name: w.name,
-                            message:
-                                "Failed: " + this.parseErrorMessage(w.details)
-                        });
+            if (response.data.name === undefined){
+                workflowFailureMsg.workflowStatus = {
+                        name: "Status",
+                        message:"No sites processed"
+                    };
+                workflowFailureMsg.exportWorkflowErrors = {
+                        name: "Workflow-level Errors",
+                        errors: []
+                    };
+                workflowFailureMsg.exportWorkflowErrors.errors.push({
+                    name: "Error",
+                    message: response.data.error_message
+                });
+            } else {
+                _.forEach(response.data.workflowSteps, function(w) {
+                    if (w.name === "Complete Export Workflow") {
+                        if (w.success === false) {
+                            workflowFailureMsg.exportWorkflowErrors.errors.push({
+                                name: w.name,
+                                message:
+                                    "Failed: " + this.parseErrorMessage(w.details)
+                            });
+                        }
                     }
-                }
-            }.bind(this));
+                }.bind(this));
+            }
             this.$emit("exportWorkflow", "exportReport", response.data, workflowFailureMsg);
         },
         parseErrorMessage(message){

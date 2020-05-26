@@ -6,7 +6,7 @@
             <v-list v-if="report.workflowLevelErrors">
                 <v-list-item-subtitle>{{report.workflowLevelErrors.name}}</v-list-item-subtitle>
                 <v-list-item v-for="(error, i) in report.workflowLevelErrors.errors" :key="i">
-                    <v-list-item-content>{{error.name}} {{error.message}}</v-list-item-content>
+                    <v-list-item-content>{{error.name}}: {{error.message}}</v-list-item-content>
                 </v-list-item>
             </v-list>
 
