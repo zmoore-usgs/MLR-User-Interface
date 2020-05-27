@@ -26,7 +26,7 @@ pipeline {
                     doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
                     extensions: [[$class:'WipeWorkspace']],
                     submoduleCfg: [],
-                    userRemoteConfigs: [[credentialsId: 'decap-rsa', url:'git@code.chs.usgs.gov:wma/osd/mlr/MLR-User-Interface.git']]
+                    userRemoteConfigs: [[url:'https://code.chs.usgs.gov/wma/osd/mlr/MLR-User-Interface.git']]
                 ])
             }
         }
