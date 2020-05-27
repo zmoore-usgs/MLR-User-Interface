@@ -1,0 +1,11 @@
+npm_build:
+  image: node:12.14-alpine
+  cache:
+    paths:
+    - node_modules
+  script:
+    - npm install
+    - npm run lint
+    - npm run build
+    - npm run test:unit
+  coverage: '/^Lines\s+:\s(\d+\.?\d+)%/'
