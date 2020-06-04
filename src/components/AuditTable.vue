@@ -2,21 +2,16 @@
     <v-card>
         <v-card-title>
             Audit Table
-            <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-            ></v-text-field>
         </v-card-title>
 
         <v-data-table
+            :server-items-length="tableCriteria.totalItems"
+            :options.sync="options"
+            :loading="loadingTable"
             :headers="headers"
             :items="indexedItems"
+            :footer-props="{'items-per-page-options': [5,10,15,20]}"
             :single-expand="true"
-            :search="search"
             :expanded.sync="expanded"
             show-expand
             item-key="id"
@@ -47,6 +42,7 @@
 <script>
 import axios from "axios";
 import AuditChangesTable from "@/components/AuditChangesTable";
+import MonitoringLocationApi from "@/services/api/MonitoringLocationApi.js";
 
 export default {
     name: "AuditTable",
@@ -54,23 +50,40 @@ export default {
     components: {
         AuditChangesTable
     },
-
     props: {
-        tableData: Array
+        tableCriteria: Object
     },
     data() {
         return {
-            search: "",
+            options: {},
+            loadingTable: false,
+            tableData: [],
+            rowsPerPageItems: [5,10,15],
             headers: [
-                { text: "Site Number", value: "siteNumber" },
-                { text: "Site Information", value: "siteInformation" },
+                { text: "Time (UTC)", value: "actionTime", width: "250px" },
                 { text: "Agency Code", value: "agencyCode" },
+                { text: "Site Number", value: "siteNumber" },
                 { text: "District Code", value: "affectedDistricts" },
+                { text: "Site Information", value: "siteInformation", sortable: false },
                 { text: "Enacted By", value: "username" },
-                { text: "Change", value: "action" }
+                { text: "Action", value: "action" }
             ],
             expanded: []
         };
+    },
+    watch: {
+        options: {
+            handler() {
+                this.getTableRows();
+            },            
+            deep: true
+        },
+        tableCriteria: {
+            handler() {
+                this.getTableRows();
+            },
+            deep: true
+        }
     },
     computed: {
         indexedItems() {
@@ -99,6 +112,27 @@ export default {
                 "&siteNumber=" +
                 siteNumber
             );
+        },
+        getTableRows() {
+            if(this.tableCriteria.criteria && this.options) {
+                this.loadingTable = true;
+                MonitoringLocationApi.getLoggedTransactions(
+                    this.tableCriteria.criteria,
+                    this.options.itemsPerPage,
+                    this.options.page,
+                    this.options.sortBy ? this.options.sortBy[0] : null,
+                    this.options.sortDesc ? (this.options.sortDesc[0] == false ? 'ASC' : 'DESC') : 'DESC'
+                )
+                .then(response => {
+                    for(var index in response.data) {
+                        response.data[index].actionTime = new Date(Date.parse(response.data[index].actionTime)).toLocaleString("en-us")
+                    }
+                    this.tableData = response.data;
+                })
+                .finally(() => {
+                    this.loadingTable = false;
+                });
+            }
         }
     }
 };
