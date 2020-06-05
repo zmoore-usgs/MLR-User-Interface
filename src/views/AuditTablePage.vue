@@ -1,14 +1,13 @@
 <template>
     <v-content>
         <v-row>
-            <v-col cols="4">
-                <AuditTableRetrieverCard @auditTable="showAuditTable" />
+            <v-col cols="12">
+                <AuditTableRetrieverCard @tableCriteria="showAuditTable" />
             </v-col>
-            <v-divider vertical color="black"></v-divider>
         </v-row>
 
-        <v-card v-if="auditTable.length != 0">
-            <AuditTable v-if="auditTable" :tableData="auditTable" />
+        <v-card>
+            <AuditTable :tableCriteria="tableCriteria" />
         </v-card>
     </v-content>
 </template>
@@ -27,13 +26,13 @@ export default {
 
     data() {
         return {
-            auditTable: []
+            tableCriteria: {}
         };
     },
 
     methods: {
-        showAuditTable(auditTable) {
-            this.auditTable = auditTable;
+        showAuditTable(tableCriteria) {
+            this.tableCriteria = tableCriteria;
         }
     }
 };
