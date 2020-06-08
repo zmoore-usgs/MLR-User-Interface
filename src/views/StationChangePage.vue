@@ -2,11 +2,7 @@
     <v-content>
         <v-row>
             <v-col>
-                <DdotProcessCard @validateWorkflow="setReportData" />
-            </v-col>
-            <v-divider vertical color="black"></v-divider>
-            <v-col>
-                <CopyLocationCard @exportWorkflow="setReportData" />
+                <UpdatePrimaryKeyCard @changeWorkflow="setReportData" />
             </v-col>
         </v-row>
         <v-card v-if="responseData">
@@ -15,12 +11,6 @@
                 <v-list-item>User: {{responseData.userName}}</v-list-item>
                 <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
                 <v-list-item>Input File: {{handleNullAttributes(responseData.inputFileName)}}</v-list-item>
-                <v-list-item v-if="exportReport">
-                    <ExportReport :report="exportReport" />
-                </v-list-item>
-                <v-list-item v-if="validateReport">
-                    <ValidateReport :report="validateReport" />
-                </v-list-item>
                 <v-list-item v-if="updatePrimaryKeyReport">
                     <UpdatePrimaryKeyReport :report="updatePrimaryKeyReport" />
                 </v-list-item>
@@ -37,37 +27,32 @@
 </template>
 
 <script>
-import DdotProcessCard from "@/components/DdotProcessCard";
-import CopyLocationCard from "@/components/CopyLocationCard";
-import ExportReport from "@/components/ExportReport";
-import ValidateReport from "@/components/ValidateReport";
+import UpdatePrimaryKeyCard from "@/components/UpdatePrimaryKeyCard";
+import UpdatePrimaryKeyReport from "@/components/UpdatePrimaryKeyReport";
 
 export default {
-    name: "SiteManagementPage",
+    name: "StationChangePage",
 
     components: {
-        DdotProcessCard,
-        CopyLocationCard,
-        ExportReport,
-        ValidateReport
+        UpdatePrimaryKeyCard,
+        UpdatePrimaryKeyReport
     },
 
     data() {
         return {
             response: {},
             responseData: null,
-            validateReport: null,
-            exportReport: {}
+            updatePrimaryKeyReport: {}
         };
     },
     
     methods: {
         setReportData(reportType, responseData, workflowFailureMsg) {
             this.responseData = responseData;
-            this.exportReport =
-                reportType === "exportReport" ? workflowFailureMsg : null;
-            this.validateReport =
-                reportType === "validateReport" ? workflowFailureMsg : null;
+            this.updatePrimaryKeyReport =
+                reportType === "updatePrimaryKeyReport"
+                    ? workflowFailureMsg
+                    : null;
         },
         downloadStepReport() {
             var dataStr =

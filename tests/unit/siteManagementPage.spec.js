@@ -8,7 +8,6 @@ Vue.use(Vuetify);
 // Components
 import ExportReport from '@/components/ExportReport.vue'
 import ValidateReport from '@/components/ValidateReport.vue'
-import UpdatePrimaryKeyReport from '@/components/UpdatePrimaryKeyReport.vue'
 import SiteManagementPage from '@/views/SiteManagementPage.vue'
 
 // Utilities
@@ -189,25 +188,6 @@ describe('SiteManagementPage.vue', () => {
         }
     }
 
-    const stationChangeSuccessResponse = {
-        data: {
-            "name": "Site Agency Code and/or Site Number Update Workflow",
-            "reportDateTime": "2020-05-14T14:51:15.110Z",
-            "userName": "mlradmin",
-            "workflowSteps": [],
-            "sites": [],
-            "numberSiteSuccess": 1,
-            "numberSiteFailure": 0
-        }
-    }
-
-    const stationChangeSuccessParsed = {
-        workflowStatus: {
-            message: "1 Transactions Succeeded, 0 Transactions Failed",
-            name: "Status"
-        }
-    }
-
     beforeEach(() => {
         localVue = createLocalVue();
         vuetify = new Vuetify();
@@ -215,7 +195,7 @@ describe('SiteManagementPage.vue', () => {
         jest.clearAllMocks();
     });
 
-    it('Renders the input fields and buttons when the Station Change functionality is toggled on', () => {
+    it('Renders the input fields and buttons', () => {
         const $config = {STATION_CHANGE_ENABLED: "true"}
         const wrapper = mountFactory({
             mocks: {
@@ -226,27 +206,6 @@ describe('SiteManagementPage.vue', () => {
         expect(wrapper.html()).toContain('Agency Code</label>');
         expect(wrapper.html()).toContain('Site Number</label>');
         expect(wrapper.html()).toContain('Select Ddot File to Upload</label>');
-        expect(wrapper.html()).toContain('New Agency Code</label>');
-        expect(wrapper.html()).toContain('New Site Number</label>');
-        expect(wrapper.html()).toContain('Reason for change</label>');
-        expect(wrapper.html()).toContain('v-text-field');
-        expect(wrapper.html()).toContain('v-btn');
-    });
-
-    it('Renders the input fields and buttons when the Station Change functionality is toggled off', () => {
-        const $config = {STATION_CHANGE_ENABLED: "false"}
-        const wrapper = mountFactory({
-            mocks: {
-                $config
-              }
-        });
-
-        expect(wrapper.html()).toContain('Agency Code</label>');
-        expect(wrapper.html()).toContain('Site Number</label>');
-        expect(wrapper.html()).toContain('Select Ddot File to Upload</label>');
-        expect(wrapper.html()).not.toContain('New Agency Code</label>');
-        expect(wrapper.html()).not.toContain('New Site Number</label>');
-        expect(wrapper.html()).not.toContain('Reason for change</label>');
         expect(wrapper.html()).toContain('v-text-field');
         expect(wrapper.html()).toContain('v-btn');
     });
@@ -263,8 +222,7 @@ describe('SiteManagementPage.vue', () => {
             response: {},
             responseData: null,
             validateReport: null,
-            exportReport: {},
-            updatePrimaryKeyReport: null
+            exportReport: {}
         });
 
         wrapper.vm.setReportData("exportReport", copySuccessResponse, exportSuccessReport);
@@ -276,7 +234,6 @@ describe('SiteManagementPage.vue', () => {
         expect(wrapper.vm.exportReport).toEqual(exportSuccessReport);
         expect(wrapper.contains(ExportReport)).toBe(true);
         expect(wrapper.contains(ValidateReport)).toBe(false);
-        expect(wrapper.contains(UpdatePrimaryKeyReport)).toBe(false);
         expect(wrapper.html()).toContain('<span>Copy Success</span>');
     });
 
@@ -292,8 +249,7 @@ describe('SiteManagementPage.vue', () => {
             response: {},
             responseData: null,
             validateReport: null,
-            exportReport: {},
-            updatePrimaryKeyReport: null
+            exportReport: {}
         });
 
         wrapper.vm.setReportData("exportReport", copyErrorResponse, exportErrorReport);
@@ -304,7 +260,6 @@ describe('SiteManagementPage.vue', () => {
         expect(wrapper.vm.exportReport).toEqual(exportErrorReport);
         expect(wrapper.contains(ExportReport)).toBe(true);
         expect(wrapper.contains(ValidateReport)).toBe(false);
-        expect(wrapper.contains(UpdatePrimaryKeyReport)).toBe(false);
         expect(wrapper.html()).toContain('Complete Export Workflow Failed: Requested Location Not Found</div>');
     });
 
@@ -320,8 +275,7 @@ describe('SiteManagementPage.vue', () => {
             response: {},
             responseData: null,
             validateReport: null,
-            exportReport: {},
-            updatePrimaryKeyReport: null
+            exportReport: {}
         });
 
         wrapper.vm.setReportData("validateReport", validateSuccessResponse, validateSuccessParsed);
@@ -332,7 +286,6 @@ describe('SiteManagementPage.vue', () => {
         expect(wrapper.vm.validateReport).toEqual(validateSuccessParsed);
         expect(wrapper.contains(ExportReport)).toBe(false);
         expect(wrapper.contains(ValidateReport)).toBe(true);
-        expect(wrapper.contains(UpdatePrimaryKeyReport)).toBe(false);
         expect(wrapper.html()).toContain('<p>Status: 2 Transactions Succeeded, 0 Transactions Failed</p>');
     });
 
@@ -348,8 +301,7 @@ describe('SiteManagementPage.vue', () => {
             response: {},
             responseData: null,
             validateReport: null,
-            exportReport: {},
-            updatePrimaryKeyReport: null
+            exportReport: {}
         });
 
         wrapper.vm.setReportData("validateReport", validateFatalErrorResponse, validateFatalErrorParsed);
@@ -360,36 +312,6 @@ describe('SiteManagementPage.vue', () => {
         expect(wrapper.vm.validateReport).toEqual(validateFatalErrorParsed);
         expect(wrapper.contains(ExportReport)).toBe(false);
         expect(wrapper.contains(ValidateReport)).toBe(true);
-        expect(wrapper.contains(UpdatePrimaryKeyReport)).toBe(false);
         expect(wrapper.html()).toContain('USGS-432356088153001 Validate Fatal Error: latitude - Latitude is out of range for state 54</div>');
     });
-
-    it('Renders the report for successful Station Change', async () => {
-        const $config = {STATION_CHANGE_ENABLED: "true"}
-        const wrapper = mountFactory({
-            mocks: {
-                $config
-              }
-        });
-
-        wrapper.setData({
-            response: {},
-            responseData: null,
-            validateReport: null,
-            exportReport: {},
-            updatePrimaryKeyReport: null
-        });
-
-        wrapper.vm.setReportData("updatePrimaryKeyReport", stationChangeSuccessResponse, stationChangeSuccessParsed);
-
-        await Vue.nextTick();
-
-        expect(wrapper.vm.responseData).toEqual(stationChangeSuccessResponse);
-        expect(wrapper.vm.updatePrimaryKeyReport).toEqual(stationChangeSuccessParsed);
-        expect(wrapper.contains(UpdatePrimaryKeyReport)).toBe(true);
-        expect(wrapper.contains(ExportReport)).toBe(false);
-        expect(wrapper.contains(ValidateReport)).toBe(false);
-        expect(wrapper.html()).toContain('<div><p>Status: 1 Transactions Succeeded, 0 Transactions Failed</p>');
-    });
-
 });

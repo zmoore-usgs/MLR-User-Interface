@@ -11,6 +11,7 @@
 
         <v-spacer></v-spacer>
         <v-btn to="/sites" class="mx-2">Monitoring Location Management</v-btn>
+        <v-btn v-if="showStationChange" to="/stationChange" class="mx-2">Station Change</v-btn>
         <v-btn to="/auditTable" class="mx-2">Audit Table</v-btn>
         <v-spacer></v-spacer>
 
@@ -31,6 +32,11 @@
 </template>
 <script>
 export default {
-    name: "USGSHeaderBar"
+    name: "USGSHeaderBar",
+    data() {
+        return {
+            showStationChange: (this.$config.STATION_CHANGE_ENABLED === "true") ? true : false
+        }
+    }
 };
 </script>
