@@ -1,28 +1,30 @@
 <template>
     <v-content>
-        <v-row>
-            <v-col>
-                <UpdatePrimaryKeyCard @changeWorkflow="setReportData" />
-            </v-col>
-        </v-row>
-        <v-card v-if="responseData">
-            <v-list dense>
-                <v-list-item>MLR Workflow: {{responseData.name}}</v-list-item>
-                <v-list-item>User: {{responseData.userName}}</v-list-item>
-                <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
-                <v-list-item>Input File: {{handleNullAttributes(responseData.inputFileName)}}</v-list-item>
-                <v-list-item v-if="updatePrimaryKeyReport">
-                    <UpdatePrimaryKeyReport :report="updatePrimaryKeyReport" />
-                </v-list-item>
-                <v-list-item>
-                    <v-btn
-                        text
-                        color="primary"
-                        @click="downloadStepReport"
-                    >Download the Error Warning/Step Report</v-btn>
-                </v-list-item>
-            </v-list>
-        </v-card>
+        <v-container>
+            <v-row>
+                <v-col>
+                    <UpdatePrimaryKeyCard @changeWorkflow="setReportData" />
+                </v-col>
+            </v-row>
+            <v-card v-if="responseData">
+                <v-list dense>
+                    <v-list-item>MLR Workflow: {{responseData.name}}</v-list-item>
+                    <v-list-item>User: {{responseData.userName}}</v-list-item>
+                    <v-list-item>Date: {{responseData.reportDateTime}}</v-list-item>
+                    <v-list-item>Input File: {{handleNullAttributes(responseData.inputFileName)}}</v-list-item>
+                    <v-list-item v-if="updatePrimaryKeyReport">
+                        <UpdatePrimaryKeyReport :report="updatePrimaryKeyReport" />
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn
+                            text
+                            color="primary"
+                            @click="downloadStepReport"
+                        >Download the Error Warning/Step Report</v-btn>
+                    </v-list-item>
+                </v-list>
+            </v-card>
+        </v-container>
     </v-content>
 </template>
 

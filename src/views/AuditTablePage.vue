@@ -1,14 +1,16 @@
 <template>
     <v-content>
-        <v-row>
-            <v-col cols="12">
-                <AuditTableRetrieverCard @tableCriteria="showAuditTable" />
-            </v-col>
-        </v-row>
+        <v-container>
+            <v-row>
+                <v-col cols="12">
+                    <AuditTableRetrieverCard @tableCriteria="showAuditTable" />
+                </v-col>
+            </v-row>
 
-        <v-card>
-            <AuditTable :tableCriteria="tableCriteria" />
-        </v-card>
+            <v-card>
+                <AuditTable :tableCriteria="tableCriteria" />
+            </v-card>
+        </v-container>
     </v-content>
 </template>
 

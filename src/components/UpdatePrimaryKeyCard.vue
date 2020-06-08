@@ -2,7 +2,8 @@
     <v-card flat>
         <v-card-title>Station Change</v-card-title>
         <v-card-text>
-            <v-row>
+            <v-form ref="form" v-model="valid">
+                <v-row>
                     <v-col cols="2" sm="6" md="4">
                     <v-text-field
                         v-model="oldAgencyCode"
@@ -19,37 +20,50 @@
                         required
                     ></v-text-field>
                     </v-col>
-            </v-row>
-            <v-row>
+                </v-row>
+                <v-row>
                     <v-col cols="2" sm="6" md="4">
-                    <v-text-field
-                        v-model="newAgencyCode"
-                        :rules="requiredRules"
-                        label="New Agency Code"
-                        required
-                    ></v-text-field>
+                        <v-text-field
+                            v-model="newAgencyCode"
+                            :rules="requiredRules"
+                            label="New Agency Code"
+                            required
+                        ></v-text-field>
                     </v-col>
-                <v-col cols="2" sm="6" md="6">
+                    <v-col cols="2" sm="6" md="6">
+                        <v-text-field
+                            v-model="newSiteNumber"
+                            :rules="requiredRules"
+                            label="New Site Number"
+                            required
+                        ></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
                     <v-text-field
-                        v-model="newSiteNumber"
-                        :rules="requiredRules"
-                        label="New Site Number"
+                        v-model="reasonText"
+                        :counter="64"
+                        :rules="validReasonText"
+                        label="Reason for change"
                         required
                     ></v-text-field>
-                </v-col>
-            </v-row>
+                </v-row>
+            </v-form>
+            <br/>
+            <br/>
             <v-row>
-            <v-text-field
-                v-model="reasonText"
-                :counter="64"
-                :rules="validReasonText"
-                label="Reason for change"
-                required
-            ></v-text-field>
+                <p style="font-size:16px">
+                    <b style="color:red; font-size:18px">CAUTION:&nbsp;</b>Station Change <b>WILL NOT</b> modify an existing location in AQUARIUS 
+                    Time-Series or its associated data. It <b>WILL</b> create a new location in 
+                    AQUARIUS Time-Series (if column 30 of the <i>data_types_cd</i> in the NWIS 
+                    Sitefile is populated with <i>A</i>, <i>I</i>, or <i>O</i>). Users will need to manually 
+                    create new time-series and move all associated data, corrections, and 
+                    visits for the new location.
+                </p>
             </v-row>
         </v-card-text>
         <v-card-actions>
-            <v-btn color="primary" @click="updatePrimaryKey">Station Change</v-btn>
+            <v-btn :disabled="!valid" color="primary" @click="updatePrimaryKey">Station Change</v-btn>
             <v-tooltip top>
                 <template v-slot:activator="{ on }">
                     <v-btn color="primary" v-on="on" icon class="mx-2">
@@ -85,6 +99,7 @@ export default {
 
     data() {
         return {
+            valid: true,
             oldAgencyCode: "",
             oldSiteNumber: "",
             newAgencyCode: "",
@@ -102,17 +117,22 @@ export default {
     },
     methods: {
         updatePrimaryKey() {
-            this.loading = true;
-            LegacyLocationApi.postChange(this.oldAgencyCode, this.oldSiteNumber, this.newAgencyCode, this.newSiteNumber, this.reasonText)
-                .then(response => {
-                    this.handleWorkflowError(response);
-                })
-                .catch(error => {
-                    this.handleWorkflowError(error.response);
-                })
-                .finally(() => {
-                        this.loading = false;
-                });
+            this.$refs.form.validate();
+            if(this.valid && 
+                confirm('Are you sure you want to execute this station change? Be sure that you have read the caution statement and understand the implications of executing this action.') 
+            ) {
+                this.loading = true;
+                LegacyLocationApi.postChange(this.oldAgencyCode, this.oldSiteNumber, this.newAgencyCode, this.newSiteNumber, this.reasonText)
+                    .then(response => {
+                        this.handleWorkflowError(response);
+                    })
+                    .catch(error => {
+                        this.handleWorkflowError(error.response);
+                    })
+                    .finally(() => {
+                            this.loading = false;
+                    });
+            }
         },
         parseMessage(message){
             if (message.includes("_message") || (message.includes("validation_errors"))){
