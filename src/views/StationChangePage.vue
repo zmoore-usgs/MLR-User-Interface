@@ -68,6 +68,8 @@ export default {
         handleNullAttributes(attr) {
             if (attr == null) {
                 return "null";
+            } else {
+                return attr;
             }
         }
     }
