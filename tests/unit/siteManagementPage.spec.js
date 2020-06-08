@@ -235,6 +235,7 @@ describe('SiteManagementPage.vue', () => {
         expect(wrapper.contains(ExportReport)).toBe(true);
         expect(wrapper.contains(ValidateReport)).toBe(false);
         expect(wrapper.html()).toContain('<span>Copy Success</span>');
+        expect(wrapper.html()).toContain('Input File: null');
     });
 
     it('Renders the report for failure Copy Location', async () => {
@@ -278,15 +279,16 @@ describe('SiteManagementPage.vue', () => {
             exportReport: {}
         });
 
-        wrapper.vm.setReportData("validateReport", validateSuccessResponse, validateSuccessParsed);
+        wrapper.vm.setReportData("validateReport", validateSuccessResponse.data, validateSuccessParsed);
 
         await Vue.nextTick();
 
-        expect(wrapper.vm.responseData).toEqual(validateSuccessResponse);
+        expect(wrapper.vm.responseData).toEqual(validateSuccessResponse.data);
         expect(wrapper.vm.validateReport).toEqual(validateSuccessParsed);
         expect(wrapper.contains(ExportReport)).toBe(false);
         expect(wrapper.contains(ValidateReport)).toBe(true);
         expect(wrapper.html()).toContain('<p>Status: 2 Transactions Succeeded, 0 Transactions Failed</p>');
+        expect(wrapper.html()).toContain('Input File: d.cabuchwa_good.011</div>');
     });
 
     it('Renders the report for validation failure', async () => {
@@ -304,11 +306,11 @@ describe('SiteManagementPage.vue', () => {
             exportReport: {}
         });
 
-        wrapper.vm.setReportData("validateReport", validateFatalErrorResponse, validateFatalErrorParsed);
+        wrapper.vm.setReportData("validateReport", validateFatalErrorResponse.data, validateFatalErrorParsed);
 
         await Vue.nextTick();
 
-        expect(wrapper.vm.responseData).toEqual(validateFatalErrorResponse);
+        expect(wrapper.vm.responseData).toEqual(validateFatalErrorResponse.data);
         expect(wrapper.vm.validateReport).toEqual(validateFatalErrorParsed);
         expect(wrapper.contains(ExportReport)).toBe(false);
         expect(wrapper.contains(ValidateReport)).toBe(true);
