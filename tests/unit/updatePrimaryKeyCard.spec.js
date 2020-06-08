@@ -373,6 +373,7 @@ describe('UpdatePrimaryKeyCard.vue', () => {
         vuetify = new Vuetify();
         jest.resetModules();
         jest.clearAllMocks();
+        jest.spyOn(window, 'confirm').mockImplementation(() => {return true});
     });
 
     it('Renders the input fields and button', () => {
