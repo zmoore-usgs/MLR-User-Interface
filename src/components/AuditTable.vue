@@ -80,6 +80,7 @@ export default {
         },
         tableCriteria: {
             handler() {
+                this.options.page = 1;
                 this.getTableRows();
             },
             deep: true
